@@ -16,7 +16,7 @@ module.exports = {
         "accessor-pairs": ["error", {
             "enforceForClassMembers": true,
         }],
-        "array-bracket-spacing": ["always"],
+        "array-bracket-spacing": ["error", "always"],
         "block-spacing": ["error", "always"],
         "brace-style": ["error", "1tbs", {
             "allowSingleLine": true,
@@ -25,7 +25,7 @@ module.exports = {
         "comma-dangle": ["error", "always-multiline"],
         "comma-style": ["error", "last"],
         "comma-spacing": ["error"],
-        "computed-property-spacing": ["never", {
+        "computed-property-spacing": ["error", "never", {
             "enforceForClassMembers": true,
         }],
         "consistent-return": ["error", {
@@ -35,7 +35,7 @@ module.exports = {
         "curly": ["error", "multi-line"],
         "dot-location": ["error", "property"],
         "eol-last": ["error", "always"],
-        "eqeqeq": ["always", {
+        "eqeqeq": ["error", "always", {
             "null": "ignore",
         }],
         "func-call-spacing": ["error", "never"],
@@ -55,9 +55,9 @@ module.exports = {
         "no-floating-decimal": "error",
         "no-implied-eval": "error",
         "no-label-var": "error",
+        "no-multi-spaces": "error",
         "no-multi-str": "error",
         "no-multiple-empty-lines": "error",
-        "no-multiple-spaces": "error",
         "no-new": "error",
         "no-new-func": "error",
         "no-new-object": "error",
@@ -102,7 +102,7 @@ module.exports = {
             "functionPrototypeMethods": true,
         }],
         "yield-star-spacing": "error",
-        "yoda": ["error", {
+        "yoda": ["error", "never", {
             "exceptRange": true,
         }],
 
@@ -115,7 +115,7 @@ module.exports = {
         "no-lone-blocks": "warn",
         "no-unneeded-ternary": "warn",
         "sort-imports": "warn",
-        "space-in-parens": ["warn", {
+        "space-in-parens": ["warn", "never", {
             "exceptions": ["empty"],
         }],
         "space-unary-ops": ["warn", {
@@ -124,7 +124,7 @@ module.exports = {
         }],
         "spaced-comment": "warn",
         "valid-typeof": ["warn", {
-            "requireStringLiterals": "true",
+            "requireStringLiterals": true,
         }],
 
     },

@@ -1,0 +1,100 @@
+#!/usr/bin/env node
+
+const {
+    execSync,
+    spawnSync,
+} = require('child_process');
+const { existsSync } = require('fs');
+const { join } = require('path');
+
+// check if should supress logging output (--quiet flag, eg. from vscode)
+const originalCommand = run(`ps -ocommand= -p ${process.ppid}`);
+const isQuiet = originalCommand.split(' ').includes('--quiet');
+
+/* Helpers */
+
+function test(command, ...args) {
+    const { status } = spawnSync(command, args, { encoding: 'utf8' });
+    return status === 0;
+}
+function run(command) {
+    const output = execSync(command);
+    return output.toString().replace(/\n$/, '');
+}
+
+function tag(fn) {
+    return (strings, ...interp) => fn(strings.reduce((concat, string, idx) => {
+        return interp.length > idx
+            ? concat + string + interp[idx]
+            : concat + string;
+    }, ''));
+}
+const colour = process.stdout.isTTY // check if terminal supports colours
+    ? (code) => tag((string) => `${code}${string}\x1b[0m`)
+    : () => tag((string) => string);
+const red = colour('\x1b[31m');
+const bold = colour('\x1b[1m');
+const cyan = colour('\x1b[36m');
+const dim = colour('\x1b[2m');
+const yellow = colour('\x1b[33m');
+const green = colour('\x1b[32m');
+
+function log(...args) {
+    if (isQuiet) return;
+    console.log(...args);
+}
+function abort(reason, details) {
+    console.error(bold`${red`Action aborted:`}` + red` ${reason}`);
+    if (!isQuiet && details) console.error(red`${details}`);
+    process.exit(1);
+}
+process.on('uncaughtException', (err) => {
+    if (err instanceof Error) err = err.stack;
+    abort('Error running hook', err);
+});
+
+/* Run Hook */
+
+log(bold`=== Git Hook: ` + cyan`pre-commit` + bold` ===`);
+
+log(dim`Getting repository root...`);
+const repo = run('git rev-parse --show-toplevel');
+log(dim`${repo}`);
+
+log('Reading list of staged files...');
+const changedFiles = run('git diff --name-only --cached')
+    .split('\n');
+for (const file of changedFiles) log(dim`${file}`);
+
+if (!changedFiles.length) abort('No files committed');
+
+log(`Linting ${changedFiles.length} ${changedFiles.length > 1 ? 'files' : 'file'}...`);
+lint: {
+    log(dim`Finding eslint installation...`);
+    const localEslint = join(repo, './node_modules/eslint/bin/eslint.js');
+    let eslint;
+    if (existsSync(localEslint)) eslint = localEslint;
+    else if (test('command', [ '-v',  'eslint' ])) eslint = 'eslint'; // globally installed
+    else abort('No eslint installation found');
+    log(dim`Using: ${eslint}`);
+
+    const {
+        status,
+        stdout,
+        stderr,
+    } = spawnSync(eslint, changedFiles, { encoding: 'utf8' });
+    if (status !== 0) abort('Linting failed', stderr || stdout);
+}
+
+log('Running tests...');
+test: {
+    const {
+        status,
+        stdout,
+        stderr,
+    } = spawnSync('npm', [ 'run', 'test' ], { encoding: 'utf8', cwd: repo });
+    if (status !== 0) abort('Tests failed', stderr || stdout);
+}
+
+log(green`Success`);
+

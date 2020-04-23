@@ -114,7 +114,6 @@ module.exports = {
         "no-extra-parens": ["warn", "all"],
         "no-lone-blocks": "warn",
         "no-unneeded-ternary": "warn",
-        "sort-imports": "warn",
         "space-in-parens": ["warn", "never", {
             "exceptions": ["empty"],
         }],

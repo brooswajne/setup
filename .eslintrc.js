@@ -7,7 +7,7 @@ module.exports = {
         "ecmaVersion": 2019,
         "sourceType": "module",
     },
-    "extends": "eslint:recommended",
+    "extends": [ "eslint:recommended" ],
 
     "rules": {
 
@@ -31,7 +31,6 @@ module.exports = {
         "consistent-return": ["error", {
             "treatUndefinedAsUnspecified": true,
         }],
-        "consistent-this": ["error", "self"],
         "curly": ["error", "multi-line"],
         "dot-location": ["error", "property"],
         "eol-last": ["error", "always"],

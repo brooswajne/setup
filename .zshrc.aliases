@@ -1,0 +1,70 @@
+# --- Vars
+
+THIS=$0
+CONFIG="$HOME/.zshrc"
+
+export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+
+# --- Aliases
+
+# ZSH
+alias configs="vim $CONFIG"
+alias aliases="vim $THIS"
+alias reloads="source $CONFIG"
+
+# Git
+alias status="git status"
+alias pull="git pull"
+alias pullr="git pull --rebase"
+alias push="git push"
+alias stash="git stash"
+alias slist="git stash list | cat"
+alias pop="git stash pop"
+alias cherp="git cherry-pick"
+alias oops="git commit --amend"
+
+# --- Utility Functions
+
+# Text Transforms
+upper() {
+    if [ -z $1 ]
+    then
+        cat /dev/stdin | tr "[:lower:]" "[:upper:]"
+    else
+        echo "$1" | tr "[:lower:]" "[:upper:]"
+    fi
+}
+lower() {
+    if [ -z $1 ]
+    then
+        cat /dev/stdin | tr "[:upper:]" "[:lower:]"
+    else
+        echo "$1" | tr "[:lower:]" "[:upper:]"
+    fi
+}
+
+# URI Encoding
+encodechar() {
+    local char=$1
+    printf '%%%02X' "'$char"
+}
+encodeuricomponent() {
+    local string=${1:-$(</dev/stdin)}
+    local len=${#string}
+    local encoded=''
+
+    local pos char
+    for (( pos = 0; pos < len; pos++ )); do
+        char=${string:$pos:1}
+        if [[ $char =~ [-_.~a-zA-Z0-9] ]]; then
+            encoded+=$char
+        else
+            encoded+=$(encodechar $char)
+        fi
+    done
+    echo $encoded
+}
+decodeuricomponent() {
+    local string=${1:-$(</dev/stdin)}
+    printf '%b\n' "${string//%/\\x}"
+}

@@ -1,4 +1,4 @@
-Firefox - https://www.mozilla.org/en-GB/firefox/developer/  \
+Firefox - https://www.mozilla.org/en-GB/firefox/developer/  
 \+ Chrome?
 
 ***
@@ -11,13 +11,13 @@ iTerm2 - https://iterm2.com/
 
 ***
 
-`oh-my-zsh` - https://github.com/ohmyzsh/ohmyzsh  \
-Theme: `powerline10k`  - https://github.com/romkatv/powerlevel10k\
+`oh-my-zsh` - https://github.com/ohmyzsh/ohmyzsh  
+Theme: `powerline10k`  - https://github.com/romkatv/powerlevel10k  
 Aliases: `[[ -f ~/.zshrc.aliases ]] && . ~/.zshrc.aliases`
 
 ***
 
-`nvm` - https://github.com/nvm-sh/nvm  \
+`nvm` - https://github.com/nvm-sh/nvm  
 `deno` - https://deno.land/
 
 ***

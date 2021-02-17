@@ -11,9 +11,8 @@ augroup numbertoggle      " absolute line numbers when in insert mode
     autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
 augroup END
 
-" support undo across sessions
-set undodir=~/.vimdir 
-set undofile
+set undodir=~/.vimdid " directory to store undo history
+set undofile          " persist undo history after closing files
 
 set tabstop=4         " changes width of tab character
 set softtabstop=4     " changes how far inserted tab characters move the cursor

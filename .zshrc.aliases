@@ -12,6 +12,9 @@ alias configs="vim $CONFIG"
 alias aliases="vim $THIS"
 alias reloads="source $CONFIG"
 
+# Vim
+alias vimrc="vim $HOME/.vimrc"
+
 # Git
 alias status="git status"
 alias pull="git pull"

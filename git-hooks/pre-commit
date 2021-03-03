@@ -1,191 +1,134 @@
-#!/usr/bin/env node
+#! /usr/bin/env node
 
 const {
 	execSync,
-	spawn: createChild,
+	spawn,
 } = require('child_process');
-const { stat } = require('fs');
+const {
+	existsSync,
+	readFileSync,
+} = require('fs');
 const { join } = require('path');
 
-// check if should supress logging output (--quiet flag, eg. from vscode)
-const originalCommand = run(`ps -ocommand= -p ${process.ppid}`);
-const commitArguments = originalCommand.split(' ');
+/** Runs a command synchronously, returns its output */
+const get = (cmd) => execSync(cmd).toString( ).replace(/\n$/, '');
+/** Runs a command asynchronously, returns its output */
+const run = (cmd, args = [ ], {
+	encoding = 'utf-8',
+	env = { },
+	...opts
+} = { }) => new Promise(function run(resolve, reject) {
+	const child = spawn(cmd, args, {
+		...opts,
+		env: { ...process.env, ...env },
+	});
+	/** @param {Buffer} */
+	const parse = (buffer) => encoding ? buffer.toString(encoding) : buffer;
+
+	const output = [ ];
+	child.stdout.on('data', (data) => output.push({ stream: 'stdout', data }));
+	child.stderr.on('data', (data) => output.push({ stream: 'stderr', data }));
+	child.on('error', function handleChildError(err) {
+		reject(err);
+		if (!child.killed) child.kill;
+	});
+	child.on('close', (code) => resolve({
+		status: code,
+		stdout: parse(Buffer.concat(output.filter(e => e.stream === 'stdout').map(e => e.data))),
+		stderr: parse(Buffer.concat(output.filter(e => e.stream === 'stderr').map(e => e.data))),
+		output: parse(Buffer.concat(output.map(e => e.data))),
+	}));
+});
+
+const originalProcess = process.ppid;
+const originalCommand = get(`ps -ocommand= -p ${originalProcess}`);
+const commitArguments = originalCommand.split(/\s/g);
+
+const isColourSupported = process.stdout.isTTY;
 const isQuiet = commitArguments.includes('--quiet');
 const isAmend = commitArguments.includes('--amend');
 
-/* Helpers */
 
-function run(command) {
-	const output = execSync(command);
-	return output.toString( ).replace(/\n$/, '');
-}
-async function spawn(command, args = [], {
-	encoding = 'utf8',
-	env = { },
-	...opts
-} = {}) {
-	return new Promise((resolve, reject) => {
-		const child = createChild(command, args, {
-			...opts,
-			env: Object.assign({}, process.env, env),
-		});
-
-		const stdout = [ ];
-		const stderr = [ ];
-		child.stdout.on('data', (data) => stdout.push(data));
-		child.stderr.on('data', (data) => stderr.push(data));
-
-		child.on('error', (err) => {
-			reject(err);
-			if (!child.killed) child.kill;
-		});
-		child.on('close', (code) => resolve({
-			status: code,
-			stdout: stdout ? encoding
-				? Buffer.concat(stdout).toString(encoding)
-				: Buffer.concat(stdout) : '',
-			stderr: stderr ? encoding
-				? Buffer.concat(stderr).toString(encoding)
-				: Buffer.concat(stderr) : '',
-		}));
-	});
-}
 /**
- * Runs a command, checks that it exits with non-zero exit code
- * @returns {Promise<boolean>}
+ * @template TReturn
+ * @param {(str: string) => TReturn} func
+ * @returns {(strings: TemplateStringsArray, ...interp: any[]) => TReturn}
  */
-async function test(command, args = [ ]) {
-	return new Promise((resolve, reject) => {
-		const child = createChild(command, args);
-		child.on('error', (err) => {
-			reject(err);
-			if (!child.killed) child.kill;
-		});
-		child.on('close', (code) => resolve(code === 0));
-	});
+const tag = (func) => function tagged(strings, ...interp) {
+	const concat = strings.reduce(function concatenate(concat, str, idx) {
+		const hasInterp = interp.length > idx;
+		if (!hasInterp) return `${concat}${str}`;
+		else return `${concat}${str}${interp[idx]}`;
+	}, '');
+	return func(concat);
 }
-/**
- * Checks that the given file exists.
- * @param {string} file
- * @returns {Promise<boolean>}
- */
-async function exists(file) {
-	return new Promise((resolve, reject) => {
-		stat(file, (err/* , stat */) => {
-			if (!err) resolve(true);
-			else if (err.code === 'ENOENT') resolve(false);
-			else reject(err);
-		});
-	});
-}
-
-function tag(fn) {
-	return (strings, ...interp) => fn(strings.reduce((concat, string, idx) => {
-		return interp.length > idx
-			? concat + string + interp[idx]
-			: concat + string;
-	}, ''));
-}
-const colour = process.stdout.isTTY // check if terminal supports colours
+const colour = isColourSupported
 	? (code) => tag((string) => `${code}${string}\x1b[0m`)
 	: ( ) => tag((string) => string);
-const bold = colour('\x1b[1m');
-const cyan = colour('\x1b[36m');
-const dim = colour('\x1b[2m');
-const green = colour('\x1b[32m');
+const bold    = colour('\x1b[1m');
+const cyan    = colour('\x1b[36m');
+const dim     = colour('\x1b[2m');
+const green   = colour('\x1b[32m');
 const magenta = colour('\x1b[35m');
-const red = colour('\x1b[31m');
+const red     = colour('\x1b[31m');
+const yellow  = colour('\x1b[33m');
 
-function log(...args) {
-	if (isQuiet) return;
-	console.log(...args);
-}
-function abort(reason, details) {
-	console.error(bold`${red`Action aborted:`}` + red` ${reason}`);
-	if (!isQuiet && details) console.error(red`${details}`);
+const log = (...args) => isQuiet ? null : console.log(...args);
+const abort = (reason, details) => {
+	console.error(bold`${red`Action aborted:`}`, red`${reason}`);
+	if (!isQuiet && details != null) console.error(red`${details}`);
 	process.exit(1);
 }
-process.on('uncaughtException', (err) => {
-	const errString = err instanceof Error
-		? err.stack
-		: err;
-	abort('Error running hook', errString);
+process.on('uncaughtException', function handleException(err) {
+	const stack = err instanceof Error ? err.stack : err;
+	abort('Error running hook', stack);
 });
 
-/* Run Hook */
+// Run git hook
 
-log(bold`=== GitHook: ` + cyan`pre-commit` + bold` ===`);
+log(bold`=== GitHook:`, cyan`pre-commit`, bold`===`);
 
 log(dim`Getting repository root...`);
-const repo = run('git rev-parse --show-toplevel');
+const repo = get('git rev-parse --show-toplevel');
 log(dim`${repo}`);
 
 log('Reading list of staged files...');
-const allFiles = new Set(run('git ls-files -c').split('\n'));
-const changedFiles = run('git diff --name-only --cached')
+const filesIndexed = new Set(get('git ls-files -c').split('\n'));
+const filesChanged = get('git diff --name-only --cached')
 	.split('\n')
-	.filter((f) => !!f.trim( )); // non-empty
+	.filter((f) => !!f.trim( ));
 
-if (!isAmend && !changedFiles.length) abort('No files staged');
+const isEmpty = !isAmend && filesChanged.length === 0;
+if (isEmpty) abort('No files staged');
 
 const count = (files) => `${files.length} ${files.length === 1 ? 'file' : 'files'}`;
-log(`${count(changedFiles)} changed:`);
-for (const file of changedFiles) log(dim`${file}${allFiles.has(file) ? '' : '- DELETED'}`);
+log(`${count(filesChanged)} changed:`);
+for (const file of filesChanged) log(dim`${file}${filesIndexed.has(file) ? '' : '- DELETED'}`);
+
+log('Reading available scripts...');
+const pathPackage = join(repo, './package.json');
+const hasPackage  = existsSync(pathPackage);
+if (!hasPackage) return log(yellow`No package.json found`);
+const package = readFileSync(pathPackage, { encoding: 'utf-8' });
+const scripts = JSON.parse(package)['scripts'];
 
 Promise.all([
 
 	(async function lint( ) {
-		const lintableFiles = changedFiles.filter((file) => {
-			const isLintable = file.endsWith('.js');
-			const isDeleted = !allFiles.has(file);
+		const isLintingPossible = 'lint' in scripts;
+		if (!isLintingPossible) return log('No lint script found');
+
+		const filesLintable = filesChanged.filter(function isLintable(file) {
+			const isLintable = file.endsWith('.js') || file.endsWith('.ts');
+			const isDeleted  = !filesIndexed.has(file);
 			return isLintable && !isDeleted;
 		});
-		if (!lintableFiles.length) return void log('No lintable changes');
+		if (!filesLintable.length) return log('No lintable changes');
+		else log(dim`Linting ${count(filesLintable)}...`);
 
-		log(`Linting ${count(lintableFiles)}...`);
-
-		log(dim`Finding eslint installation...`);
-		const localEslint = join(repo, './node_modules/eslint/bin/eslint.js');
-		let eslint;
-		if (await exists(localEslint)) eslint = localEslint;
-		else if (await test('command', [ '-v', 'eslint' ])) eslint = 'eslint'; // globally installed
-		else abort('No eslint installation found');
-		log(dim`Using eslint installation: ${eslint}`);
-
-		const {
-			status,
-			stdout,
-			stderr,
-		} = await spawn(eslint, [ '--fix', ...lintableFiles ]);
-		if (status !== 0) abort('Linting failed', stderr || stdout);
+		const { status, output } = await run('npm', [ 'run', 'lint', '--', ...filesLintable ]);
+		if (status !== 0) abort('Linting failed', output);
 		else log(magenta`Linting passed.`);
 	})( ),
 
-	(async function test( ) {
-		const testableFiles = new Set( );
-		for (const file of changedFiles) {
-			const isTestable = /\.(m?jsx?|tsx?)$/.test(file);
-			if (isTestable) testableFiles.add(file);
-		}
-		if (!testableFiles.size) return;
-
-		log('Running unit tests...');
-		// change per-project to run the right command to only test the actually changed files if possible
-		const {
-			status,
-			stdout,
-			stderr,
-		} = await spawn('npm', [ 'run', 'test' ]);
-		if (status !== 0) return void abort('Unit tests failed', stderr || stdout);
-
-		const output = stdout.split('\n')
-			.map(line => line.trim( ))
-			.filter(Boolean) // remove empty lines
-			.slice(2) // remove header lines from npm running a script
-			.join('\n');
-		log(magenta`Unit tests passed.`);
-		log(dim`${output}`);
-	})( ),
-
 ]).then(( ) => log(green`Commit approved.`));
-

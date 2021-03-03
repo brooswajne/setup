@@ -2,18 +2,22 @@
 
 THIS=$0
 CONFIG="$HOME/.zshrc"
+CONFIG_LOCAL="$HOME/.zshrc.local"
 
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+export EDITOR="nvim"
 
 # --- Aliases
 
 # ZSH
-alias configs="vim $CONFIG"
-alias aliases="vim $THIS"
-alias reloads="source $CONFIG"
+alias zconfig="$EDITOR $CONFIG"
+alias zreload="source $CONFIG"
+alias zlocal="$EDITOR $CONFIG_LOCAL"
+alias zalias="$EDITOR $THIS"
 
 # Vim
-alias vimrc="vim $HOME/.vimrc"
+alias v="$EDITOR"
+alias vimrc="$EDITOR $HOME/.vimrc"
 
 # Git
 alias status="git status"

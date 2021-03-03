@@ -26,6 +26,14 @@ alias pop="git stash pop"
 alias cherp="git cherry-pick"
 alias oops="git commit --amend"
 
+# Docker
+alias docks='docker ps -a --format "{{.Names}}😎{{.ID}}😎{{.Status}}" \
+	| sort \
+	| awk -F"😎" '"'"'{ print "\x1b[1m"$1"\x1b[0m\x1e(\x1b[33m"$2"\x1b[0m)\x1e"$3"\x1b[0m" }'"'"' \
+	| sed -e $(echo "s/\x1eExited/\x1e\x1b[31mExited/") \
+	| sed -e $(echo "s/\x1eUp/\x1e\x1b[32mUp/") \
+	| column -s$(echo "\x1e") -t'
+
 # --- Utility Functions
 
 # Text Transforms

@@ -54,6 +54,8 @@ inoremap <C-k> <Esc>
 nnoremap <Leader><Leader> <C-^>
 " quick-save
 nnoremap <Leader>w :w<CR>
+" quick-sort
+vnoremap <Leader>s :sort<CR>
 " quick-macros
 nnoremap <Leader>q qa
 nnoremap <Leader>p @a
@@ -83,23 +85,23 @@ nnoremap <Leader>{ zM
 nnoremap <Leader>] zo
 nnoremap <Leader>} zR
 " search hotkeys
-map <C-p> :Files<CR>
-map <C-o> :Buffers<CR>
-map <C-l> :Rg<CR>
+nnoremap <C-p> :Files<CR>
+nnoremap <C-o> :Buffers<CR>
+nnoremap <C-l> :Rg<CR>
 " jump to coc diagnostics etc
-nmap <Leader>, <Plug>(coc-diagnostic-prev)
-nmap <Leader>. <Plug>(coc-diagnostic-next)
-nmap <Leader>< <Plug>(coc-git-prevconflict)
-nmap <Leader>> <Plug>(coc-git-nextconflict)
-nmap <Leader>/ <Plug>(coc-definition)
-nmap <Leader>? <Plug>(coc-type-definition)
+nnoremap <Leader>, <Plug>(coc-diagnostic-prev)
+nnoremap <Leader>. <Plug>(coc-diagnostic-next)
+nnoremap <Leader>< <Plug>(coc-git-prevconflict)
+nnoremap <Leader>> <Plug>(coc-git-nextconflict)
+nnoremap <Leader>/ <Plug>(coc-definition)
+nnoremap <Leader>? <Plug>(coc-type-definition)
 " scroll coc popups
-nnoremap <expr><C-j> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-j>"
-nnoremap <expr><C-k> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
-inoremap <expr><up>   coc#float#has_scroll() ? coc#float#scroll(1) : "\<up>"
-inoremap <expr><down> coc#float#has_scroll() ? coc#float#scroll(0) : "\<down>"
+nnoremap <expr><C-up>   coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-up>"
+nnoremap <expr><C-down> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-down>"
+inoremap <expr><C-up>   coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-up>"
+inoremap <expr><C-down> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-down>"
 " rename symbol
-nmap <Leader>rn <Plug>(coc-rename)
+nnoremap <Leader>rn <Plug>(coc-rename)
 " view documentation symbol (function defined in plugins)
 nnoremap <Leader>' :call <SID>view_docs()<CR>
 " easy aligning

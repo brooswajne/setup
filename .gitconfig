@@ -2,6 +2,7 @@
     excludefiles = /Users/willem.garnier/.gitignore.global
     excludesfile = /Users/willem.garnier/.gitignore_global
     pager = delta
+	hooksPath = /Users/willem.garnier/.githooks
 [diff]
     colorMoved = default
     
@@ -32,6 +33,8 @@
     see = -c \"core.pager=delta --side-by-side\" show
     # view the current changes in a side-by-side diff view
     sxs = -c \"core.pager=delta --side-by-side\" diff
+	# double check the changes staged for committing
+	check = diff --staged
     
     # view the latest remote version of a branch
     view = "!_() { git fetch && git log origin/$1; }; _"

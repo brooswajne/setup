@@ -162,10 +162,14 @@ highlight CocHintSign    ctermbg=233
 " - vim-markdown
 " - vim-rooter
 " - vim-sneak
+" - vim-svelte-plugin
 " - vim-toml
 
 " vim-sneak: re-tapping s jumps to next match
 let g:sneak#s_next = 1
+
+" vim-svelte-plugin: indentation style
+let g:vim_svelte_plugin_has_init_indent = 0
 
 " lightline: configure status bar (coc diagnostics)
 let g:lightline = {

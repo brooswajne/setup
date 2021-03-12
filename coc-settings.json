@@ -1,0 +1,11 @@
+{
+    "diagnostic.errorSign": "●",
+    "diagnostic.warningSign": "●",
+    "diagnostic.infoSign": "●",
+    "diagnostic.hintSign": "●",
+
+    "eslint.autoFixOnSave": true,
+
+    "git.enableGutters": false,
+    "git.addGBlameToBufferVar": true
+}

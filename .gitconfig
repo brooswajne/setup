@@ -23,18 +23,21 @@
     # simple command aliases
     co = checkout
     nb = checkout -b
+	dda = restore --staged
+	check = diff --staged
     del = branch -d
     kill = branch -D
     
+	# git log wrappers
     history = log --all --full-history --no-merges --follow --
     tree = log --graph --date=short --pretty='%C(auto)%h %C(auto,cyan)%ad%Creset%C(auto)%d %s - %C(auto,cyan)%ae' --all
+	unpushed = log @{u}..
+	what = unpushed --oneline
 
     # view a commit's changes in a side-by-side diff view
     see = -c \"core.pager=delta --side-by-side\" show
     # view the current changes in a side-by-side diff view
     sxs = -c \"core.pager=delta --side-by-side\" diff
-	# double check the changes staged for committing
-	check = diff --staged
     
     # view the latest remote version of a branch
     view = "!_() { git fetch && git log origin/$1; }; _"

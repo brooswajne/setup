@@ -30,6 +30,10 @@ alias pop="git stash pop"
 alias cherp="git cherry-pick"
 alias oops="git commit --amend"
 
+# Node
+alias npr="npm run"
+alias scripts="jq '.scripts' package.json"
+
 # Docker
 alias docks='docker ps -a --format "{{.Names}}😎{{.ID}}😎{{.Status}}" \
 	| sort \
@@ -37,6 +41,17 @@ alias docks='docker ps -a --format "{{.Names}}😎{{.ID}}😎{{.Status}}" \
 	| sed -e $(echo "s/\x1eExited/\x1e\x1b[31mExited/") \
 	| sed -e $(echo "s/\x1eUp/\x1e\x1b[32mUp/") \
 	| column -s$(echo "\x1e") -t'
+
+# Todo
+alias td="todo.sh"
+alias tde="nvim /usr/local/bin/todo.txt"
+
+# Timewarrior
+alias tlunch="timew stop"
+alias tback="timew continue"
+alias tshow="timew summary :id"
+alias tshoww="timew summary :id from monday"
+alias tweek="timew week"
 
 # --- Utility Functions
 

@@ -36,6 +36,10 @@ set splitbelow        " horizontal splits open below
 set guicursor=a:block " for nvim, avoid a thin cursor in insert mode
 set nofoldenable      " don't fold files by default when opening them
 
+" command tab completions listed better
+set wildmenu
+set wildmode=list:longest,full
+
 " =======
 " Keymaps
 " =======
@@ -56,10 +60,20 @@ nnoremap <Leader><Leader> <C-^>
 nnoremap <Leader>w :w<CR>
 " quick-sort
 vnoremap <Leader>s :sort<CR>
+" quick-lines
+nnoremap <Leader>o o<Esc>0"_D
+nnoremap <Leader>O O<Esc>0"_D
 " quick-macros
 nnoremap <Leader>q qa
 nnoremap <Leader>p @a
 vnoremap <Leader>p :normal @a<CR>
+" stop searching easier
+nnoremap <C-h> :nohlsearch<CR>
+vnoremap <C-h> :nohlsearch<CR>
+" center search results vertically
+nnoremap <silent> n nzz
+nnoremap <silent> N Nzz
+nnoremap <silent> g* g*zz
 " jump to start/end of line easier
 noremap H ^
 noremap L $
@@ -89,19 +103,19 @@ nnoremap <C-p> :Files<CR>
 nnoremap <C-o> :Buffers<CR>
 nnoremap <C-l> :Rg<CR>
 " jump to coc diagnostics etc
-nnoremap <Leader>, <Plug>(coc-diagnostic-prev)
-nnoremap <Leader>. <Plug>(coc-diagnostic-next)
-nnoremap <Leader>< <Plug>(coc-git-prevconflict)
-nnoremap <Leader>> <Plug>(coc-git-nextconflict)
-nnoremap <Leader>/ <Plug>(coc-definition)
-nnoremap <Leader>? <Plug>(coc-type-definition)
+nmap <Leader>, <Plug>(coc-diagnostic-prev)
+nmap <Leader>. <Plug>(coc-diagnostic-next)
+nmap <Leader>< <Plug>(coc-git-prevconflict)
+nmap <Leader>> <Plug>(coc-git-nextconflict)
+nmap <Leader>/ <Plug>(coc-definition)
+nmap <Leader>? <Plug>(coc-type-definition)
 " scroll coc popups
-nnoremap <expr><C-up>   coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-up>"
-nnoremap <expr><C-down> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-down>"
-inoremap <expr><C-up>   coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-up>"
-inoremap <expr><C-down> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-down>"
+nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
+inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
 " rename symbol
-nnoremap <Leader>rn <Plug>(coc-rename)
+nmap <Leader>rn <Plug>(coc-rename)
 " view documentation symbol (function defined in plugins)
 nnoremap <Leader>' :call <SID>view_docs()<CR>
 " easy aligning
@@ -118,31 +132,61 @@ endif
 " Colors
 " ======
 
-highlight VertSplit  ctermbg=232 ctermfg=232
-highlight SignColumn ctermbg=233
-highlight LineNr     ctermbg=234 ctermfg=grey
-highlight Folded     ctermbg=233 ctermfg=239
-
-" highlight the current line number
-set cursorline
-if exists('&cursorlineopt')
-	set cursorlineopt=number
+set background=dark
+" use 24 bit colours
+if (has("termguicolors"))
+	set termguicolors
 endif
-highlight clear CursorLine
-highlight CursorLineNR cterm=bold ctermfg=yellow ctermbg=235
 
-" gitgutter styling
-let g:gitgutter_set_sign_backgrounds = 1
-highlight GitGutterAdd    ctermbg=233 cterm=bold ctermfg=green 
-highlight GitGutterChange ctermbg=233 cterm=bold ctermfg=yellow
-highlight GitGutterDelete ctermbg=233 cterm=bold ctermfg=red
+function! SetMyHighlighting()
+	" transparent background
+	highlight Normal     ctermbg=none  guibg=none
 
-" coc styling
-highlight CocFloating    ctermbg=233
-highlight CocErrorSign   ctermbg=233
-highlight CocWarningSign ctermbg=233
-highlight CocInfoSign    ctermbg=233
-highlight CocHintSign    ctermbg=233
+	highlight VertSplit  ctermbg=232   ctermfg=232 
+	highlight VertSplit  guibg=#080808 guifg=#080808
+	highlight SignColumn ctermbg=233
+	highlight SignColumn guibg=#121212
+	highlight LineNr     ctermbg=234   ctermfg=grey
+	highlight LineNr     guibg=#080808 guifg=grey
+	highlight Folded     ctermbg=233   ctermfg=239
+	highlight Folded     guibg=#121212 guifg=#4e4e4e
+
+	" highlight the current line number
+	set cursorline
+	if exists('&cursorlineopt')
+		set cursorlineopt=number
+	endif
+	highlight clear CursorLine
+	highlight CursorLineNR cterm=bold ctermfg=yellow ctermbg=235
+	highlight CursorLineNR gui=bold   guifg=yellow   guibg=#262626
+
+	" gitgutter styling
+	let g:gitgutter_set_sign_backgrounds = 1
+	highlight GitGutterAdd    ctermbg=233   cterm=bold ctermfg=green 
+	highlight GitGutterAdd    guibg=#121212 gui=bold   guibg=green
+	highlight GitGutterChange ctermbg=233   cterm=bold ctermfg=yellow
+	highlight GitGutterChange guibg=#121212 gui=bold   guibg=yellow
+	highlight GitGutterDelete ctermbg=233   cterm=bold ctermfg=red
+	highlight GitGutterDelete guibg=#121212 gui=bold   guibg=red
+
+	" coc styling
+	highlight CocFloating    ctermbg=233 guibg=#121212
+	highlight CocErrorSign   ctermbg=233 guibg=#121212
+	highlight CocWarningSign ctermbg=233 guibg=#121212
+	highlight CocInfoSign    ctermbg=233 guibg=#121212
+	highlight CocHintSign    ctermbg=233 guibg=#121212
+endfunction
+
+if (has("autocmd") && !has("gui_running"))
+	augroup colorset
+		autocmd!
+		" add my custom highlighting
+		autocmd ColorScheme * call SetMyHighlighting()
+	augroup END
+endif
+
+" set colorscheme
+colorscheme space-vim-dark
 
 " =======
 " Plugins

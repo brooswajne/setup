@@ -8,7 +8,15 @@ const {
 	existsSync,
 	readFileSync,
 } = require('fs');
-const { join } = require('path');
+const {
+	extname,
+	join,
+} = require('path');
+
+const LINTABLE_FILES = new Set([
+	'.js', '.jsx',
+	'.ts', '.tsx',
+]);
 
 /** Runs a command synchronously, returns its output */
 const get = (cmd) => execSync(cmd).toString( ).replace(/\n$/, '');
@@ -47,7 +55,6 @@ const commitArguments = originalCommand.split(/\s/g);
 const isColourSupported = process.stdout.isTTY;
 const isQuiet = commitArguments.includes('--quiet');
 const isAmend = commitArguments.includes('--amend');
-
 
 /**
  * @template TReturn
@@ -119,11 +126,12 @@ Promise.all([
 		if (!isLintingPossible) return log('No lint script found');
 
 		const filesLintable = filesChanged.filter(function isLintable(file) {
-			const isLintable = file.endsWith('.js') || file.endsWith('.ts');
+			const extension = extname(file);
+			const isLintable = LINTABLE_FILES.has(extension);
 			const isDeleted  = !filesIndexed.has(file);
 			return isLintable && !isDeleted;
 		});
-		if (!filesLintable.length) return log('No lintable changes');
+		if (!filesLintable.length) return log(yellow`No lintable changes.`);
 		else log(dim`Linting ${count(filesLintable)}...`);
 
 		const { status, output } = await run('npm', [ 'run', 'lint', '--', ...filesLintable ]);

@@ -34,6 +34,7 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
+export FZF_COMPLETION_TRIGGER='§'
 export FZF_DEFAULT_COMMAND='fd --type file --follow'
 export FZF_CTRL_T_COMMAND='fd --type file --follow'
 _fzf_compgen_path() {

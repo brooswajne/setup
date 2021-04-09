@@ -15,6 +15,11 @@ alias zreload="source $CONFIG"
 alias zlocal="$EDITOR $CONFIG_LOCAL"
 alias zalias="$EDITOR $THIS"
 
+# Navigation
+alias tree="exa --tree --group-directories-first --sort Name"
+alias treee="tree --all"
+alias treeg="treee --git-ignore --ignore-glob .git"
+
 # Vim
 alias v="$EDITOR"
 alias vimrc="$EDITOR $HOME/.vimrc"
@@ -52,6 +57,7 @@ alias tback="timew continue"
 alias tshow="timew summary :id"
 alias tshoww="timew summary :id from monday"
 alias tweek="timew week"
+alias tmonth="timew month"
 
 # --- Utility Functions
 

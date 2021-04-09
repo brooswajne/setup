@@ -191,25 +191,6 @@ colorscheme space-vim-dark
 " =======
 " Plugins
 " =======
-" current list (2021-03-03):
-"" :r !exa -1a ~/.vim/bundle | awk '{ print "" - "$0 }'
-" - coc.nvim
-" - editorconfig-vim
-" - fzf
-" - fzf.vim
-" - Jenkinsfile-vim-syntax
-" - lightline.vim
-" - rust.vim
-" - tabular
-" - vim-commentary
-" - vim-fugitive
-" - vim-gitgutter
-" - vim-highlightedyank
-" - vim-markdown
-" - vim-rooter
-" - vim-sneak
-" - vim-svelte-plugin
-" - vim-toml
 
 " vim-sneak: re-tapping s jumps to next match
 let g:sneak#s_next = 1

@@ -12,7 +12,7 @@ My setup, for easy migration to a new laptop.
    - [1Password](https://1password.com/)
 1. Setup vim
    ```bash
-   ln -s vim ~/.vim
+   ln -s $(pwd)/vim ~/.vim
    ln vim/init.vim ~/.vimrc
    ```
 1. Install [homebrew](https://brew.sh/)
@@ -21,7 +21,7 @@ My setup, for easy migration to a new laptop.
 1. Install [neovim](https://neovim.io/)
 1. Setup neovim
    ```bash
-   ln -s vim ~/.config/nvim
+   ln -s $(pwd)/vim ~/.config/nvim
    ```
 1. Install [oh-my-zsh](https://github.com/ohmyzsh/ohmyzsh)
    - Theme: [powerline10k](https://github.com/romkatv/powerlevel10k)

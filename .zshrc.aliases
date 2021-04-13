@@ -105,3 +105,17 @@ decodeuricomponent() {
     local string=${1:-$(</dev/stdin)}
     printf '%b\n' "${string//%/\\x}"
 }
+
+# Quicker CTRL-Z to fg
+override_ctrl_z() {
+	if [[ $#BUFFER -eq 0 ]]; 
+	then
+		BUFFER="fg";
+		zle accept-line;
+	else
+		zle push-input;
+		zle clear-screen;
+	fi
+}
+zle -N override_ctrl_z
+bindkey '' override_ctrl_z

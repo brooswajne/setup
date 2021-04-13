@@ -52,3 +52,9 @@
 [submodule "vim/plugins/vim-toml"]
 	path = vim/bundle/vim-toml
 	url = https://github.com/cespare/vim-toml.git
+[submodule "vim/bundle/vim-js-pretty-template"]
+	path = vim/bundle/vim-js-pretty-template
+	url = https://github.com/Quramy/vim-js-pretty-template.git
+[submodule "vim/bundle/vim-svelte-plugin"]
+	path = vim/bundle/vim-svelte-plugin
+	url = https://github.com/leafOfTree/vim-svelte-plugin.git

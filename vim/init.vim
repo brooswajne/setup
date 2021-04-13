@@ -283,3 +283,13 @@ function! s:view_docs()
 		call CocAction('doHover')
 	endif
 endfunction
+
+" vim-js-pretty-template: syntax highlighting for template literals
+call jspretmpl#register_tag('css', 'css')
+call jspretmpl#register_tag('html', 'html')
+call jspretmpl#register_tag('sql', 'sql')
+augroup tagged_templates
+	autocmd!
+	autocmd FileType javascript JsPreTmpl
+	autocmd FileType typescript JsPreTmpl
+augroup END

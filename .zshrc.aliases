@@ -34,6 +34,7 @@ alias slist="git stash list -p"
 alias pop="git stash pop"
 alias cherp="git cherry-pick"
 alias oops="git commit --amend"
+alias conflicts="git diff --name-only --diff-filter=U | xargs $EDITOR"
 
 # Node
 alias npr="npm run"

@@ -40,6 +40,13 @@ set nofoldenable      " don't fold files by default when opening them
 set wildmenu
 set wildmode=list:longest,full
 
+" additional filetype detection
+augroup more_filetypes
+	autocmd!
+	autocmd BufNewFile,BufRead *.cjs set syntax=javascript
+augroup END
+
+
 " =======
 " Keymaps
 " =======

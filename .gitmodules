@@ -58,3 +58,6 @@
 [submodule "vim/bundle/vim-svelte-plugin"]
 	path = vim/bundle/vim-svelte-plugin
 	url = https://github.com/leafOfTree/vim-svelte-plugin.git
+[submodule "vim/bundle/yats.vim"]
+	path = vim/bundle/yats.vim
+	url = https://github.com/HerringtonDarkholme/yats.vim.git

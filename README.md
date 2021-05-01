@@ -17,6 +17,7 @@ My setup, for easy migration to a new laptop.
    ```
 1. Install [homebrew](https://brew.sh/)
 1. Install [Fantasque Sans Mono](https://github.com/belluzj/fantasque-sans)
+   - [Patched NerdFont](https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/FantasqueSansMono) (install Mono of each variation)
 1. Use [iTerm2 theme](./iterm2)
 1. Install [neovim](https://neovim.io/)
 1. Setup neovim

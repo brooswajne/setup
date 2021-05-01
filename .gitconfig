@@ -1,18 +1,30 @@
 [core]
-    excludefiles = /Users/willem.garnier/.gitignore.global
-    excludesfile = /Users/willem.garnier/.gitignore_global
+	hooksPath = ~/.githooks
+    excludefiles = ~/.global.gitignore
     pager = delta
-	hooksPath = /Users/willem.garnier/.githooks
+[init]
+	defaultBranch = release
 [diff]
     colorMoved = default
     
 [delta]
     line-numbers = true
     syntax-theme = Dracula
+	# decoration underlines only to end of text
+	width = variable
     commit-decoration-style = ul bold yellow
-    file-style = bold magenta
-    file-decoration-style = ul magenta
-    hunk-header-decoration-style = box cyan
+	# filename is in each hunk rather than a big box
+    file-style = omit
+	hunk-header-style = file line-number bold syntax
+	hunk-header-decoration-style = ul cyan
+	hunk-header-file-style = bold cyan
+	hunk-header-line-number-style = bold magenta
+	# line numbers
+	line-numbers-minus-style = bold red
+	line-numbers-plus-style = bold green
+	line-numbers-zero-style = auto
+	line-numbers-left-style = dim
+	line-numbers-right-style = dim
     
 [alias]
     # alias management

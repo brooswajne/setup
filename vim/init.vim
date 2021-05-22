@@ -207,6 +207,9 @@ let g:vim_svelte_plugin_has_init_indent = 0
 " vim-svelte-plugin: support lang=ts
 let g:vim_svelte_plugin_use_typescript = 1
 
+" vim-rooter: use npm module as root
+let g:rooter_patterns = ['.git', 'package.json']
+
 " lightline: configure status bar (coc diagnostics)
 let g:lightline = {
 			\ 'active': {

@@ -1,11 +1,21 @@
 {
-    "diagnostic.errorSign": "●",
-    "diagnostic.warningSign": "●",
-    "diagnostic.infoSign": "●",
-    "diagnostic.hintSign": "●",
+	"diagnostic.errorSign": "●",
+	"diagnostic.warningSign": "●",
+	"diagnostic.infoSign": "●",
+	"diagnostic.hintSign": "●",
 
-    "eslint.autoFixOnSave": true,
+	"eslint.autoFixOnSave": true,
+	"eslint.validate": [
+		"html",
+		"javascript",
+		"javascriptreact",
+		"markdown",
+		"svelte",
+		"typescript",
+		"typescriptreact",
+		"vue"
+	],
 
-    "git.enableGutters": false,
-    "git.addGBlameToBufferVar": true
+	"git.enableGutters": false,
+	"git.addGBlameToBufferVar": true
 }

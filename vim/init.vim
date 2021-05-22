@@ -14,9 +14,9 @@ augroup END
 set undodir=~/.vimdid " directory to store undo history
 set undofile          " persist undo history after closing files
 
-set tabstop=4         " changes width of tab character
-set softtabstop=4     " changes how far inserted tab characters move the cursor
-set shiftwidth=4      " affects automatic indentation, and when pressing <<, >>, or ==
+set tabstop=2         " changes width of tab character
+set softtabstop=2     " changes how far inserted tab characters move the cursor
+set shiftwidth=2      " affects automatic indentation, and when pressing <<, >>, or ==
 set noexpandtab       " don't turn tabs into spaces
 
 set scrolloff=3       " always keep n lines above/below the cursor when scrolling

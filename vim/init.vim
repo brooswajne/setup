@@ -43,7 +43,7 @@ set wildmode=list:longest,full
 " additional filetype detection
 augroup more_filetypes
 	autocmd!
-	autocmd BufNewFile,BufRead *.cjs set syntax=javascript
+	autocmd BufNewFile,BufRead *.cjs set filetype=javascript
 augroup END
 
 

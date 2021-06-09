@@ -61,3 +61,6 @@
 [submodule "vim/bundle/yats.vim"]
 	path = vim/bundle/yats.vim
 	url = https://github.com/HerringtonDarkholme/yats.vim.git
+[submodule "vim/bundle/vim-terraform"]
+	path = vim/bundle/vim-terraform
+	url = https://github.com/hashivim/vim-terraform.git

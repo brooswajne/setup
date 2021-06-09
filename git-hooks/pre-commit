@@ -134,7 +134,12 @@ Promise.all([
 		if (!filesLintable.length) return log(yellow`No lintable changes.`);
 		else log(dim`Linting ${count(filesLintable)}...`);
 
-		const { status, output } = await run('npm', [ 'run', 'lint', '--', ...filesLintable ]);
+		const isESLint = scripts['lint'].startsWith('eslint');
+		if (isESLint) log(dim`Running ESLint directly...`);
+
+		const { status, output } = isESLint
+			? await run('npx', [ 'eslint', ...filesLintable ])
+			: await run('npm', [ 'run', 'lint', '--', ...filesLintable ]);
 		if (status !== 0) abort('Linting failed', output);
 		else log(magenta`Linting passed.`);
 	})( ),

@@ -1,6 +1,7 @@
 " load all plugins (in ~/.vim/bundle)
 execute pathogen#infect() 
 
+set nocompatible          " enter the current millenium
 syntax on                 " syntax highlighting
 filetype plugin indent on " file detection
 
@@ -125,15 +126,12 @@ inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float
 nmap <Leader>rn <Plug>(coc-rename)
 " view documentation symbol (function defined in plugins)
 nnoremap <Leader>' :call <SID>view_docs()<CR>
-" easy aligning
-if exists(":Tabularize")
-	" align at = signs
-	nnoremap <Leader>a= :Tabularize /=<CR>
-	vnoremap <Leader>a= :Tabularize /=<CR>
-	" align with character after :
-	nnoremap <Leader>a: :Tabularize /:\zs<CR>
-	vnoremap <Leader>a: :Tabularize /:\zs<CR>
-endif
+" align at = signs
+nnoremap <Leader>a= :Tabularize /=<CR>
+vnoremap <Leader>a= :Tabularize /=<CR>
+" align with character after :
+nnoremap <Leader>a: :Tabularize /:\zs<CR>
+vnoremap <Leader>a: :Tabularize /:\zs<CR>
 
 " ======
 " Colors

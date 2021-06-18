@@ -208,6 +208,11 @@ let g:vim_svelte_plugin_use_typescript = 1
 " vim-rooter: use npm module as root
 let g:rooter_patterns = ['.git', 'package.json']
 
+" vim-terraform: align settings automatically
+let g:terraform_align = 1
+" vim-terraform: format on save
+let g:terraform_fmt_on_save = 1
+
 " lightline: configure status bar (coc diagnostics)
 let g:lightline = {
 			\ 'active': {

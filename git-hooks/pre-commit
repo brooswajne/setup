@@ -1,5 +1,7 @@
 #! /usr/bin/env node
 
+// Git hook which attempts to run linting on the edited Javascript files
+
 const {
 	execSync,
 	spawn,
@@ -87,6 +89,10 @@ const abort = (reason, details) => {
 	process.exit(1);
 }
 process.on('uncaughtException', function handleException(err) {
+	const stack = err instanceof Error ? err.stack : err;
+	abort('Error running hook', stack);
+});
+process.on('unhandledRejection', function handleRejection(err) {
 	const stack = err instanceof Error ? err.stack : err;
 	abort('Error running hook', stack);
 });

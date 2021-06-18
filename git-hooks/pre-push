@@ -1,0 +1,33 @@
+#! /bin/sh
+
+# Git hook which checks for temporary commit message being pushed
+
+echo "\x1b[1m=== GitHook: \x1b[0m\x1b[36mpre-push\x1[0m\x1b[1m ==="
+
+remote="$1"
+url="$2"
+
+empty=0000000000000000000000000000000000000000
+
+IFS=' '
+while read local_ref local_sha remote_ref remote_sha
+do
+	if [ "$local_sha" = $empty ]
+	then
+		echo "\x1b[2mDeleted: $remote_ref ($remote_sha)\x1b[0m"
+		# TODO: something?
+	else
+		echo "\x1b[2mChecking: $remote_sha -> $local_sha\x1b[0m"
+		# get commit range, if remote_sha is empty then this is a new branch
+		range=$([ "$remote_sha" = $empty ] && "$local_sha" || "$remote_sha..$local_sha")
+		commits=$(git rev-list --grep "^fixup" --grep "^wip" -i --format=oneline "$range")
+		if [ -n "$commits" ]
+		then
+			echo "\x1b[1m\x1b[31mPush aborted:\x1b[0m\x1b[31m Rebase required.\x1b[0m"
+			echo "\x1b[1mCommits to rebase:\x1b[0m"
+			echo "$commits"
+			exit 1
+		fi
+	fi
+done
+echo "\x1b[32mPush approved.\x1b[0m"

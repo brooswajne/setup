@@ -1,24 +1,24 @@
 [core]
 	hooksPath = ~/.githooks
-    excludefiles = ~/.global.gitignore
-    pager = delta
+	excludefiles = ~/.global.gitignore
+	pager = delta
 [init]
 	defaultBranch = release
 [pull]
 	ff = only
 [diff]
-    colorMoved = default
+	colorMoved = default
 [interactive]
 	diffFilter = delta --color-only
-    
+
 [delta]
-    line-numbers = true
-    syntax-theme = Dracula
+	line-numbers = true
+	syntax-theme = Dracula
 	# decoration underlines only to end of text
 	width = variable
-    commit-decoration-style = ul bold yellow
+	commit-decoration-style = ul bold yellow
 	# filename is in each hunk rather than a big box
-    file-style = omit
+	file-style = omit
 	hunk-header-style = file line-number bold syntax
 	hunk-header-decoration-style = ul cyan
 	hunk-header-file-style = bold cyan
@@ -29,41 +29,41 @@
 	line-numbers-zero-style = auto
 	line-numbers-left-style = dim
 	line-numbers-right-style = dim
-    
+
 [alias]
-    # alias management
-    alias = "!_() { git config --global alias.$1 \"$2\"; echo \"Aliased \\x1b[1mgit $1\\x1b[0m to: \\x1b[2m${2//\\\\/\\\\\\\\}\\x1b[0m\"; }; _"
-    aliases = "!_() { git config --get-regexp \"^alias\\.${1}\" | sed -e s/^alias\\.// | awk '{ printf \"\\x1b[1m\" $1 \"\\x1e\\x1b[0m\"; $1=\"\"; print $0 }' | sort | column -t -s $(echo \"\\x1e\"); }; _"
-    unalias = "!_() { git config --global --unset alias.$1; echo \"Removed alias \\x1b[1mgit $1\\x1b[0m.\"; }; _"
-    
-    # simple command aliases
-    co = checkout
-    nb = checkout -b
+	# alias management
+	alias = "!_() { git config --global alias.$1 \"$2\"; echo \"Aliased \\x1b[1mgit $1\\x1b[0m to: \\x1b[2m${2//\\\\/\\\\\\\\}\\x1b[0m\"; }; _"
+	aliases = "!_() { git config --get-regexp \"^alias\\.${1}\" | sed -e s/^alias\\.// | awk '{ printf \"\\x1b[1m\" $1 \"\\x1e\\x1b[0m\"; $1=\"\"; print $0 }' | sort | column -t -s $(echo \"\\x1e\"); }; _"
+	unalias = "!_() { git config --global --unset alias.$1; echo \"Removed alias \\x1b[1mgit $1\\x1b[0m.\"; }; _"
+
+	# simple command aliases
+	co = checkout
+	nb = checkout -b
 	dda = restore --staged
 	check = diff --staged
-    del = branch -d
-    kill = branch -D
-    
+	del = branch -d
+	kill = branch -D
+
 	# git log wrappers
-    history = log --all --full-history --no-merges --follow --
-    tree = log --graph --date=short --pretty='%C(auto)%h %C(auto,cyan)%ad%Creset%C(auto)%d %s - %C(auto,cyan)%ae' --all
+	history = log --all --full-history --no-merges --follow --
+	tree = log --graph --date=short --pretty='%C(auto)%h %C(auto,cyan)%ad%Creset%C(auto)%d %s - %C(auto,cyan)%ae' --all
 	unpushed = log @{u}..
 	what = unpushed --oneline
 
-    # view a commit's changes in a side-by-side diff view
-    see = -c \"core.pager=delta --side-by-side\" show
-    # view the current changes in a side-by-side diff view
-    sxs = -c \"core.pager=delta --side-by-side\" diff
-    
-    # view the latest remote version of a branch
-    view = "!_() { git fetch && git log origin/$1; }; _"
-    # merge the latest remote version of a branch
-    moo = "!_() { git fetch && git merge origin/$1; }; _"
-    # push the current branch to origin
-    pinit = "!_() { git push --set-upstream origin ${1-$(git rev-parse --abbrev-ref HEAD)}; }; _"
-    
-    # viewing commits from a recent timeframe
-    since = "!_() { git log --format=\"format:%an||%h||%s\" --since=\"$*\" | awk -F\"[|][|]\" '{ print \"\\x1b[1m\" $1 \"\\x1e\\x1b[2m\" $2 \"\\x1e\\x1b[0m\" $3 }' | column -t -s $(echo \"\\x1e\"); }; _"
-    today = since 00:00:00
-    week = since 1 week ago
-    month = since 1 month ago
+	# view a commit's changes in a side-by-side diff view
+	see = -c \"core.pager=delta --side-by-side\" show
+	# view the current changes in a side-by-side diff view
+	sxs = -c \"core.pager=delta --side-by-side\" diff
+
+	# view the latest remote version of a branch
+	view = "!_() { git fetch && git log origin/$1; }; _"
+	# merge the latest remote version of a branch
+	moo = "!_() { git fetch && git merge origin/$1; }; _"
+	# push the current branch to origin
+	pinit = "!_() { git push --set-upstream origin ${1-$(git rev-parse --abbrev-ref HEAD)}; }; _"
+
+	# viewing commits from a recent timeframe
+	since = "!_() { git log --format=\"format:%an||%h||%s\" --since=\"$*\" | awk -F\"[|][|]\" '{ print \"\\x1b[1m\" $1 \"\\x1e\\x1b[2m\" $2 \"\\x1e\\x1b[0m\" $3 }' | column -t -s $(echo \"\\x1e\"); }; _"
+	today = since 00:00:00
+	week = since 1 week ago
+	month = since 1 month ago

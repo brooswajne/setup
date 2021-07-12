@@ -1,9 +1,17 @@
 " load all plugins (in ~/.vim/bundle)
 execute pathogen#infect() 
 
-set nocompatible          " enter the current millenium
+set nocompatible          " aka. 'enter the current millennium'
 syntax on                 " syntax highlighting
 filetype plugin indent on " file detection
+
+set spellsuggest+=10      " limit height of spelling suggestions
+set spelllang=en_gb       " spell-checking language
+augroup spellchecker
+	autocmd Filetype gitcommit setlocal spell
+	autocmd Filetype text      setlocal spell
+	autocmd Filetype markdown  setlocal spell
+augroup END
 
 set number relativenumber " line numbers (relative to current line)
 augroup numbertoggle      " absolute line numbers when in insert mode
@@ -20,7 +28,7 @@ set softtabstop=2     " changes how far inserted tab characters move the cursor
 set shiftwidth=2      " affects automatic indentation, and when pressing <<, >>, or ==
 set noexpandtab       " don't turn tabs into spaces
 
-set scrolloff=3       " always keep n lines above/below the cursor when scrolling
+set scrolloff=3       " always keep N lines above/below the cursor when scrolling
 set foldmethod=indent " folding based on indent
 set nowrap            " avoid wrapping when text is off the edge
 
@@ -54,6 +62,8 @@ augroup END
 
 let mapleader="\<Space>"
 
+" check my spelling
+nnoremap <Leader>c :setlocal spell!<CR>
 " quicker commands
 nnoremap ; :
 vnoremap ; :
@@ -78,7 +88,7 @@ vnoremap <Leader>p :normal @a<CR>
 " stop searching easier
 nnoremap <C-h> :nohlsearch<CR>
 vnoremap <C-h> :nohlsearch<CR>
-" center search results vertically
+" centre search results vertically
 nnoremap <silent> n nzz
 nnoremap <silent> N Nzz
 nnoremap <silent> g* g*zz
@@ -110,14 +120,14 @@ nnoremap <Leader>} zR
 nnoremap <C-p> :Files<CR>
 nnoremap <C-o> :Buffers<CR>
 nnoremap <C-l> :Rg<CR>
-" jump to coc diagnostics etc
+" jump to coc diagnostics etc.
 nmap <Leader>, <Plug>(coc-diagnostic-prev)
 nmap <Leader>. <Plug>(coc-diagnostic-next)
 nmap <Leader>< <Plug>(coc-git-prevconflict)
 nmap <Leader>> <Plug>(coc-git-nextconflict)
 nmap <Leader>/ <Plug>(coc-definition)
 nmap <Leader>? <Plug>(coc-type-definition)
-" scroll coc popups
+" scroll coc pop-ups
 nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
 nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
 inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
@@ -133,9 +143,9 @@ vnoremap <Leader>a= :Tabularize /=<CR>
 nnoremap <Leader>a: :Tabularize /:\zs<CR>
 vnoremap <Leader>a: :Tabularize /:\zs<CR>
 
-" ======
-" Colors
-" ======
+" =======
+" Colours
+" =======
 
 set background=dark
 " use 24 bit colours

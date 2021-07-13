@@ -4,7 +4,8 @@
 
 set -e
 
-echo "\x1b[1m=== GitHook: \x1b[0m\x1b[36mpre-push\x1b[0m\x1b[1m ==="
+echo ""
+echo "\x1b[1m=== GitHook: \x1b[0m\x1b[36mpre-push\x1b[0m\x1b[1m ===\x1b[0m"
 
 remote="$1"
 url="$2"
@@ -14,22 +15,47 @@ empty=0000000000000000000000000000000000000000
 IFS=' '
 while read local_ref local_sha remote_ref remote_sha
 do
+	echo ""
+	local_commit=${local_sha:0:7}
+	remote_commit=${remote_sha:0:7}
 	if [ "$local_sha" = $empty ]
 	then
-		echo "\x1b[2mDeleted: $remote_ref ($remote_sha)\x1b[0m"
+		echo "$remote_ref@\x1b[35m\x1b[1m$remote_commit\x1b[0m => deleted"
 		# TODO: something?
 	else
+		echo "$remote_ref@\x1b[35m\x1b[1m$remote_commit\x1b[0m => $local_ref@\x1b[35m\x1b[1m$local_commit\x1b[0m"
+
+		# get commit range
+		if [ "$remote_sha" = $empty ]
+		then # if remote_sha is empty then this is a new branch
+			echo "\x1b[2mAttempting to automatically find base branch on: \x1b[1morigin\x1b[0m"
+			base=$(git log --pretty="%d" | grep 'origin/[a-zA-Z0-9-]*' -m1 -o | head -n1)
+			if [ -z "$base" ]
+			then
+				echo "\x1b[93mUnable to find base branch\x1[0m"
+			else
+				echo "\x1b[93mUsing base branch: \x1b[1m$base\x1b[0m"
+				remote_sha=$(git rev-parse $base)
+			fi
+		fi
+
 		echo "\x1b[2mChecking: \x1b[1m$remote_sha\x1b[0m\x1b[2m -> \x1b[1m$local_sha\x1b[0m"
-		# get commit range, if remote_sha is empty then this is a new branch
 		range=$([ "$remote_sha" = $empty ] && echo "$local_sha" || echo "$remote_sha..$local_sha")
 		commits=$(git rev-list --grep "^fixup" --grep "^wip" -i --format=oneline "$range")
+
 		if [ -n "$commits" ]
 		then
 			echo "\x1b[1m\x1b[31mPush aborted:\x1b[0m\x1b[31m Rebase required.\x1b[0m"
+			echo ""
 			echo "\x1b[1mCommits to rebase:\x1b[0m"
 			echo "$commits"
+			echo ""
 			exit 1
 		fi
+
 	fi
 done
+
+echo ""
 echo "\x1b[32mPush approved.\x1b[0m"
+echo ""

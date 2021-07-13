@@ -64,6 +64,8 @@ let mapleader="\<Space>"
 
 " check my spelling
 nnoremap <Leader>c :setlocal spell!<CR>
+" switch away and close
+nnoremap <Leader>bd <C-^>:bd #<CR>
 " quicker commands
 nnoremap ; :
 vnoremap ; :

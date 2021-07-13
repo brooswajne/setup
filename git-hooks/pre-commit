@@ -83,6 +83,7 @@ const red     = colour('\x1b[31m');
 const yellow  = colour('\x1b[33m');
 
 const log = (...args) => isQuiet ? null : console.log(...args);
+const newline = ( ) => log('');
 const abort = (reason, details) => {
 	console.error(bold`${red`Action aborted:`}`, red`${reason}`);
 	if (!isQuiet && details != null) console.error(red`${details}`);
@@ -99,7 +100,10 @@ process.on('unhandledRejection', function handleRejection(err) {
 
 // Run git hook
 
+newline( );
 log(bold`=== GitHook:`, cyan`pre-commit`, bold`===`);
+
+newline( ); // ---- Get repository metadata
 
 log(dim`Getting repository root...`);
 const repo = get('git rev-parse --show-toplevel');
@@ -111,6 +115,8 @@ const filesChanged = get('git diff --name-only --cached')
 	.split('\n')
 	.filter((f) => !!f.trim( ));
 
+newline( ); // ---- Print out list of changed files:
+
 const isEmpty = !isAmend && filesChanged.length === 0;
 if (isEmpty) abort('No files staged');
 
@@ -118,10 +124,12 @@ const count = (files) => `${files.length} ${files.length === 1 ? 'file' : 'files
 log(`${count(filesChanged)} changed:`);
 for (const file of filesChanged) log(dim`${file}${filesIndexed.has(file) ? '' : '- DELETED'}`);
 
+newline( ); // ---- Get and run the available scripts
+
 log('Reading available scripts...');
 const pathPackage = join(repo, './package.json');
 const hasPackage  = existsSync(pathPackage);
-if (!hasPackage) return log(yellow`No package.json found`);
+if (!hasPackage) return log(yellow`No package.json found\n`);
 const package = readFileSync(pathPackage, { encoding: 'utf-8' });
 const scripts = JSON.parse(package)['scripts'];
 
@@ -129,7 +137,7 @@ Promise.all([
 
 	(async function lint( ) {
 		const isLintingPossible = 'lint' in scripts;
-		if (!isLintingPossible) return log('No lint script found');
+		if (!isLintingPossible) return log(yellow`No lint script found`);
 
 		const filesLintable = filesChanged.filter(function isLintable(file) {
 			const extension = extname(file);
@@ -150,4 +158,4 @@ Promise.all([
 		else log(magenta`Linting passed.`);
 	})( ),
 
-]).then(( ) => log(green`Commit approved.`));
+]).then(( ) => log(green`\nCommit approved.\n`));

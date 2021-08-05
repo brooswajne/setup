@@ -128,6 +128,9 @@ nnoremap <Leader>} zR
 nnoremap <C-p> :Files<CR>
 nnoremap <C-o> :Buffers<CR>
 nnoremap <C-l> :Rg<CR>
+nnoremap <C-k> :Rg <C-R><C-W><CR>
+nnoremap <C-i> :BCommits<CR>
+nnoremap <C-u> :Commits<CR>
 " jump to coc diagnostics etc.
 nmap <Leader>, <Plug>(coc-diagnostic-prev)
 nmap <Leader>. <Plug>(coc-diagnostic-next)

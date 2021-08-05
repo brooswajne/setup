@@ -6,6 +6,8 @@
 	defaultBranch = release
 [pull]
 	ff = only
+[commit]
+	verbose = true
 [diff]
 	# visually show when lines have been moved rather than deleted/added
 	colorMoved = default

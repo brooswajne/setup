@@ -49,6 +49,7 @@ set splitbelow        " horizontal splits open below
 
 set guicursor=a:block " for nvim, avoid a thin cursor in insert mode
 set nofoldenable      " don't fold files by default when opening them
+set conceallevel=0    " don't conceal things, i want to see them for what they are
 
 " command tab completions listed better
 set wildmenu
@@ -229,6 +230,14 @@ let g:rooter_patterns = ['.git', 'package.json']
 let g:terraform_align = 1
 " vim-terraform: format on save
 let g:terraform_fmt_on_save = 1
+
+" vimwiki: don't force me to conceal when i don't want to
+let g:vimwiki_conceallevel = 0
+" vim-json: don't force me to conceal when i don't want to
+let g:vim_json_syntax_conceal = 0
+" vim-markdown: don't force me to conceal when i don't want to
+let g:vim_markdown_conceal = 0
+let g:vim_markdown_conceal_code_blocks = 0
 
 " lightline: configure status bar (coc diagnostics)
 let g:lightline = {

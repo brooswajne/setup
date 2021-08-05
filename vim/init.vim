@@ -8,7 +8,7 @@ filetype plugin indent on " file detection
 set spellsuggest+=10      " limit height of spelling suggestions
 set spelllang=en_gb       " spell-checking language
 augroup spellchecker
-	autocmd Filetype gitcommit setlocal spell
+	autocmd Filetype gitcommit setlocal spell spellcapcheck=
 	autocmd Filetype text      setlocal spell
 	autocmd Filetype markdown  setlocal spell
 augroup END
@@ -18,6 +18,11 @@ augroup numbertoggle      " absolute line numbers when in insert mode
 	autocmd!
 	autocmd BufEnter,FocusGained,InsertLeave * set relativenumber
 	autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
+augroup END
+
+augroup wrapping " line-wrapping for text-based files
+	autocmd Filetype text     setlocal wrap linebreak textwidth=80
+	autocmd Filetype markdown setlocal wrap linebreak textwidth=80
 augroup END
 
 set undodir=~/.vimdid " directory to store undo history

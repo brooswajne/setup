@@ -8,7 +8,6 @@ My setup, for easy migration to a new laptop.
 
 1. Install applications:
    - [Firefox](https://www.mozilla.org/en-GB/firefox/developer/)
-   - [iTerm2](https://iterm2.com/)
    - [1Password](https://1password.com/)
 1. Setup vim
    ```bash
@@ -16,9 +15,13 @@ My setup, for easy migration to a new laptop.
    ln -s $(pwd)/vim/init.vim ~/.vimrc
    ```
 1. Install [homebrew](https://brew.sh/)
+1. Install [kitty](https://sw.kovidgoyal.net/kitty/)
+   ```sh
+	 brew install --cask kitty
+	 ln -s $(pwd)/kitty.conf ~/.config/kitty/kitty.conf
+	 ```
 1. Install [Fantasque Sans Mono](https://github.com/belluzj/fantasque-sans)
    - [Patched NerdFont](https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/FantasqueSansMono) (install Mono of each variation)
-1. Use [iTerm2 theme](./iterm2)
 1. Install [neovim](https://neovim.io/)
 1. Setup neovim
    ```bash

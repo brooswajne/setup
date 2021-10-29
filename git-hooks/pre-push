@@ -32,7 +32,7 @@ do
 			base=$(git log --pretty="%d" | grep 'origin/[a-zA-Z0-9.-]*' -m1 -o | head -n1)
 			if [ -z "$base" ]
 			then
-				echo "\x1b[93mUnable to find base branch\x1[0m"
+				echo "\x1b[93mUnable to find base branch\x1b[0m"
 			else
 				echo "\x1b[93mUsing base branch: \x1b[1m$base\x1b[0m"
 				remote_sha=$(git rev-parse $base)

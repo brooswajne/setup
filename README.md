@@ -13,7 +13,7 @@ My setup, for easy migration to a new laptop.
 1. Setup vim
    ```bash
    ln -s $(pwd)/vim ~/.vim
-   ln vim/init.vim ~/.vimrc
+   ln -s $(pwd)/vim/init.vim ~/.vimrc
    ```
 1. Install [homebrew](https://brew.sh/)
 1. Install [Fantasque Sans Mono](https://github.com/belluzj/fantasque-sans)
@@ -28,8 +28,8 @@ My setup, for easy migration to a new laptop.
    - Theme: [powerline10k](https://github.com/romkatv/powerlevel10k)
 1. Link zsh config:
    ```bash
-   ln .zshrc ~/.zshrc
-   ln .zshrc.aliases ~/.zshrc.aliases
+   ln -s $(pwd)/.zshrc ~/.zshrc
+   ln -s $(pwd).zshrc.aliases ~/.zshrc.aliases
    ```
 1. Install languages:
    - [nvm](https://github.com/nvm-sh/nvm) (node)
@@ -44,7 +44,7 @@ My setup, for easy migration to a new laptop.
      ```
    - Setup global hooks:
      ```bash
-	 ln -s git-hooks ~/.githooks
+	 ln -s $(pwd)/git-hooks ~/.githooks
 	 ```
 
 ### Extras

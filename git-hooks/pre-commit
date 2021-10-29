@@ -131,7 +131,7 @@ const pathPackage = join(repo, './package.json');
 const hasPackage  = existsSync(pathPackage);
 if (!hasPackage) return log(yellow`No package.json found\n`);
 const package = readFileSync(pathPackage, { encoding: 'utf-8' });
-const scripts = JSON.parse(package)['scripts'];
+const scripts = JSON.parse(package)['scripts'] || { };
 
 Promise.all([
 

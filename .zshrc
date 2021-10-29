@@ -26,8 +26,10 @@ source $ZSH/oh-my-zsh.sh
 # different editor for remote sessions
 [[ -n $SSH_CONNECTION ]] && export EDITOR='vim'
 
-export GPG_TTY=$(tty)
+export GPG_TTY=$TTY
+
 # additional installations
+
 export PATH="$HOME/nvim-osx64/bin:$PATH"
 export PATH="/usr/local/opt/postgresql@9.6/bin:$PATH"
 export NVM_DIR="$HOME/.nvm"

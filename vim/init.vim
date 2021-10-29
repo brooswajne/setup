@@ -236,7 +236,17 @@ let g:terraform_fmt_on_save = 1
 
 " vimwiki: don't use just <Leader> as a prefix, as it conflicts with my keybinds
 let g:vimwiki_map_prefix = '<Leader>vw'
+" vimwiki: don't use vimwiki filetype for non-vimwiki markdown files
+let g:vimwiki_global_ext = 0
+" vimwiki: path
+let g:vimwiki_root = '~/wiki'
+let g:vimwiki_list = [ {
+			\ 'path': '~/wiki',
+			\ 'syntax': 'markdown',
+			\ 'ext': '.md',
+			\ } ]
 
+" don't force me to conceal when i don't want to:
 " vimwiki: don't force me to conceal when i don't want to
 let g:vimwiki_conceallevel = 0
 " vim-json: don't force me to conceal when i don't want to

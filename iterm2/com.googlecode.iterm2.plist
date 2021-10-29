@@ -6,6 +6,8 @@
 	<true/>
 	<key>Default Bookmark Guid</key>
 	<string>81355BD0-492F-4D8F-86FE-9D8E5554B940</string>
+	<key>DefaultTabStopWidth</key>
+	<integer>4</integer>
 	<key>DimOnlyText</key>
 	<true/>
 	<key>DisableFullscreenTransparency</key>

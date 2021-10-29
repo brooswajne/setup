@@ -2,6 +2,7 @@
 
 THIS=$0
 CONFIG="$HOME/.zshrc"
+CONFIG_ALIAS="$THIS"
 CONFIG_LOCAL="$HOME/.zshrc.local"
 
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
@@ -14,6 +15,7 @@ alias zconfig="$EDITOR $CONFIG"
 alias zreload="source $CONFIG"
 alias zlocal="$EDITOR $CONFIG_LOCAL"
 alias zalias="$EDITOR $THIS"
+alias j="jobs -d"
 
 # Navigation
 alias tree="exa --tree --group-directories-first --sort Name"
@@ -25,27 +27,34 @@ alias v="$EDITOR"
 alias vimrc="$EDITOR $HOME/.vimrc"
 
 # Git
+alias c="git checkout"
 alias status="git status"
+alias glog="git log --oneline"
+alias gap="git add -p"
 alias pull="git pull"
 alias pullr="git pull --rebase"
 alias push="git push"
+alias pushf="git push --force-with-lease"
 alias stash="git stash"
 alias slist="git stash list -p"
 alias pop="git stash pop"
 alias cherp="git cherry-pick"
 alias oops="git commit --amend"
 alias conflicts="git diff --name-only --diff-filter=U | xargs $EDITOR"
+alias pr="gh pr create --web"
 
 # Node
 alias npr="npm run"
 alias scripts="jq '.scripts' package.json"
 
 # Docker
-alias docks='docker ps -a --format "{{.Names}}😎{{.ID}}😎{{.Status}}" \
+alias docks='docker ps -a --format "{{.Names}}😎{{.ID}}😎{{.Status}}😎{{.Image}}" \
 	| sort \
-	| awk -F"😎" '"'"'{ print "\x1b[1m"$1"\x1b[0m\x1e(\x1b[33m"$2"\x1b[0m)\x1e"$3"\x1b[0m" }'"'"' \
+	| awk -F"😎" '"'"'{ print "\x1b[1m"$1"\x1b[0m\x1e(\x1b[33m"$2"\x1b[0m)\x1e"$3"\x1b[0m\x1e\x1b[2m🍌"$4"\x1b[0m" }'"'"' \
 	| sed -e $(echo "s/\x1eExited/\x1e\x1b[31mExited/") \
 	| sed -e $(echo "s/\x1eUp/\x1e\x1b[32mUp/") \
+	| sed -e "s/🍌.*://" \
+	| sed -e "s/🍌//" \
 	| column -s$(echo "\x1e") -t'
 
 # Todo
@@ -53,12 +62,12 @@ alias td="todo.sh"
 alias tde="nvim /usr/local/bin/todo.txt"
 
 # Timewarrior
-alias tlunch="timew stop"
+alias tgone="timew stop"
 alias tback="timew continue"
 alias tshow="timew summary :id"
-alias tshoww="timew summary :id from monday"
-alias tweek="timew week"
-alias tmonth="timew month"
+alias tshoww="timew summary :id 8d before tomorrow"
+alias tweek="timew week 8d before tomorrow"
+alias tmonth="timew month 1m before tomorrow"
 
 # --- Utility Functions
 
@@ -105,6 +114,11 @@ decodeuricomponent() {
     local string=${1:-$(</dev/stdin)}
     printf '%b\n' "${string//%/\\x}"
 }
+base64url() {
+	# https://stackoverflow.com/questions/55389211/string-based-data-encoding-base64-vs-base64url
+	local encoded=$(base64 </dev/stdin)
+	echo $encoded | sed -E 's/\+/-/g;s/\//_/g;s/=+//g'
+}
 
 # Quicker CTRL-Z to fg
 override_ctrl_z() {
@@ -119,3 +133,7 @@ override_ctrl_z() {
 }
 zle -N override_ctrl_z
 bindkey '' override_ctrl_z
+
+# --- Cleanup
+
+unset THIS;

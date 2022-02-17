@@ -141,6 +141,7 @@ nmap <Leader>< <Plug>(coc-git-prevconflict)
 nmap <Leader>> <Plug>(coc-git-nextconflict)
 nmap <Leader>/ <Plug>(coc-definition)
 nmap <Leader>? <Plug>(coc-type-definition)
+nmap <Leader>g <Plug>(coc-git-chunkinfo)
 " scroll coc pop-ups
 nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
 nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"

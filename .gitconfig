@@ -1,6 +1,6 @@
 [core]
 	hooksPath = ~/.githooks
-	excludefiles = ~/.global.gitignore
+	excludesFile = ~/.global.gitignore
 	pager = delta
 [init]
 	defaultBranch = release

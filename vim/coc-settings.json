@@ -1,4 +1,8 @@
 {
+	"coc.preferences.formatOnSaveFiletypes": [
+		"go"
+	],
+
 	"diagnostic.errorSign": "●",
 	"diagnostic.warningSign": "●",
 	"diagnostic.infoSign": "●",

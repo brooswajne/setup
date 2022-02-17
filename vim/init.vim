@@ -25,6 +25,10 @@ augroup wrapping " line-wrapping for text-based files
 	autocmd Filetype markdown setlocal wrap linebreak textwidth=80
 augroup END
 
+augroup indentation " space vs tab indentation
+	autocmd Filetype markdown setlocal expandtab
+augroup END
+
 set undodir=~/.vimdid " directory to store undo history
 set undofile          " persist undo history after closing files
 
@@ -60,7 +64,6 @@ augroup more_filetypes
 	autocmd!
 	autocmd BufNewFile,BufRead *.cjs set filetype=javascript
 augroup END
-
 
 " =======
 " Keymaps

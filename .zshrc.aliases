@@ -88,6 +88,15 @@ lower() {
         echo "$1" | tr "[:lower:]" "[:upper:]"
     fi
 }
+mask() {
+	# masks a sensitive string such as a password
+	# eg. `echo 'password' | mask` -> `p******d`
+	local string=${1:-$(</dev/stdin)}
+	local char_first="${string:0:1}"
+	local chars_masked="${string:1:${#string}-2}"
+	local char_last="${string:${#string}-1}"
+	printf "%s%s%s\n" "$char_first" "${chars_masked//?/*}" "$char_last"
+}
 
 # URI Encoding
 encodechar() {

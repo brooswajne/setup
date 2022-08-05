@@ -31,12 +31,12 @@ export GPG_TTY=$TTY
 # additional installations
 
 export PATH="$HOME/nvim-osx64/bin:$PATH"
-export PATH="/usr/local/opt/postgresql@9.6/bin:$PATH"
+export PATH="/usr/local/sbin:$PATH"
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 export FZF_COMPLETION_TRIGGER='§'
 export FZF_DEFAULT_COMMAND='fd --type file --follow'
 export FZF_CTRL_T_COMMAND='fd --type file --follow'

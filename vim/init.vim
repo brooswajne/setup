@@ -94,6 +94,8 @@ nnoremap <C-j> <Esc>
 inoremap <C-j> <Esc>
 nnoremap <C-k> <Esc>
 inoremap <C-k> <Esc>
+" also in terminal mode
+tnoremap <Esc> <C-\><C-n>
 " quick switch between buffers
 nnoremap <Leader><Leader> <C-^>
 " quick-save
@@ -145,23 +147,17 @@ nnoremap <C-l> :Rg<CR>
 nnoremap <C-k> :Rg <C-R><C-W><CR>
 nnoremap <C-i> :BCommits<CR>
 nnoremap <C-u> :Commits<CR>
-" jump to coc diagnostics etc.
-nmap <Leader>, <Plug>(coc-diagnostic-prev)
-nmap <Leader>. <Plug>(coc-diagnostic-next)
-nmap <Leader>< <Plug>(coc-git-prevconflict)
-nmap <Leader>> <Plug>(coc-git-nextconflict)
-nmap <Leader>/ <Plug>(coc-definition)
-nmap <Leader>? <Plug>(coc-type-definition)
-nmap <Leader>g <Plug>(coc-git-chunkinfo)
-" scroll coc pop-ups
-nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
-inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
-inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
-" rename symbol
-nmap <Leader>rn <Plug>(coc-rename)
-" view documentation symbol (function defined in plugins)
-nnoremap <Leader>' :call <SID>view_docs()<CR>
+" lsp commands
+nnoremap <Leader>, <cmd>lua vim.diagnostic.goto_prev()<CR>
+nnoremap <Leader>. <cmd>lua vim.diagnostic.goto_next()<CR>
+nnoremap <Leader>l <cmd>lua vim.diagnostic.open_float(nil, { focus = false })<CR>
+nnoremap <Leader>/ <cmd>lua vim.lsp.buf.definition()<CR>
+nnoremap <Leader>? <cmd>lua vim.lsp.buf.type_definition()<CR>
+nnoremap <Leader>rn <cmd>lua vim.lsp.buf.rename()<CR>
+nnoremap <Leader>' <cmd>lua vim.lsp.buf.hover()<CR>
+nnoremap <Leader>" <cmd>lua vim.lsp.buf.code_action()<CR>
+" search for conflict markers
+nmap <Leader>> />>>>>><CR>
 " align at = signs
 nnoremap <Leader>a= :Tabularize /=<CR>
 vnoremap <Leader>a= :Tabularize /=<CR>
@@ -209,13 +205,6 @@ function! SetMyHighlighting()
 	highlight GitGutterChange guibg=#121212 gui=bold   guibg=yellow
 	highlight GitGutterDelete ctermbg=233   cterm=bold ctermfg=red
 	highlight GitGutterDelete guibg=#121212 gui=bold   guibg=red
-
-	" coc styling
-	highlight CocFloating    ctermbg=233 guibg=#121212
-	highlight CocErrorSign   ctermbg=233 guibg=#121212
-	highlight CocWarningSign ctermbg=233 guibg=#121212
-	highlight CocInfoSign    ctermbg=233 guibg=#121212
-	highlight CocHintSign    ctermbg=233 guibg=#121212
 endfunction
 
 if (has("autocmd") && !has("gui_running"))
@@ -229,9 +218,113 @@ endif
 " set colorscheme
 colorscheme space-vim-dark
 
+" ===============
+" Language Server
+" ===============
+
+lua << EOF
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+
+local lsp_spinner = require('lsp_spinner');
+lsp_spinner.setup({})
+lsp_spinner.init_capabilities(capabilities)
+
+local on_attach = function(client, bufnr)
+	lsp_spinner.on_attach(client, bufnr)
+
+	-- if possible: format on save
+	if client.resolved_capabilities.document_formatting then
+		vim.api.nvim_exec([[
+			augroup lsp_format_on_save
+				autocmd BufWritePre * lua vim.lsp.buf.formatting_sync(nil, 1000)
+			augroup END
+		]], false)
+	else 
+		vim.api.nvim_exec([[ 
+			augroup lsp_format_on_save
+				autocmd!
+			augroup END
+		]], false)
+	end
+
+	-- if possible: highlight hovered symbol
+	if client.resolved_capabilities.document_highlight then
+		vim.api.nvim_exec([[
+			augroup lsp_document_highlight
+				autocmd! * <buffer>
+				autocmd CursorHold  <buffer> lua vim.lsp.buf.document_highlight()
+				autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
+			augroup END
+		]], false)
+	else 
+		vim.api.nvim_exec([[ 
+			augroup lsp_document_highlight
+				autocmd!
+			augroup END
+		]], false)
+	end
+end
+
+local cfg = { on_attach = on_attach, capabilities = capabilities }
+local lsp = require('lspconfig')
+lsp.ansiblels.setup(cfg)      -- Ansible
+lsp.bashls.setup(cfg)         -- Bash
+lsp.clangd.setup(cfg)         -- C++
+lsp.cmake.setup(cfg)          -- CMake
+lsp.denols.setup(cfg)         -- TypeScript (Deno)
+lsp.eslint.setup(cfg)         -- JavaScript (ESlint)
+lsp.jdtls.setup(cfg)          -- Java
+lsp.phpactor.setup(cfg)       -- PHP
+lsp.pyright.setup(cfg)        -- Pyright
+lsp.tsserver.setup({          -- TypeScript (Node)
+	cfg,
+	root_dir = lsp.util.root_pattern('package.json'),
+})
+lsp.vimls.setup(cfg)         -- VimScript
+require('rust-tools').setup({ -- Rust
+	tools = {
+		autoSetHints = true,
+		hover_with_actions = true,
+		inlay_hints = {
+			show_parameter_hints = false,
+			parameter_hints_prefix = "",
+			other_hints_prefix = "",
+		},
+	},
+	server = {
+		cfg,
+		standalone = true, -- standalone file support
+		settings = {
+			[ 'rust-analyzer' ] = {
+				checkOnSave = { command = 'clippy' },
+			},
+		},
+	},
+})
+
+-- Completions
+local cmp = require('cmp')
+cmp.setup({
+	mapping = {
+		[ '<Tab>' ] = cmp.mapping.select_next_item(),
+	},
+	sources = {
+		{ name = 'nvim_lsp' },
+		{ name = 'path' },
+		{ name = 'buffer' },
+	},
+})
+EOF
+
+" format on save for eslint - is this needed?
+" autocmd BufWritePre *.ts,*.js EslintFixAll
+
 " =======
 " Plugins
 " =======
+
+" nvim-cmp: completions options
+set completeopt=menuone,noinsert,noselect
 
 " vim-sneak: re-tapping s jumps to next match
 let g:sneak#s_next = 1
@@ -270,56 +363,80 @@ let g:vim_json_syntax_conceal = 0
 let g:vim_markdown_conceal = 0
 let g:vim_markdown_conceal_code_blocks = 0
 
-" lightline: configure status bar (coc diagnostics)
+" lightline: configure status bar (diagnostics)
 let g:lightline = {
 			\ 'active': {
 			\   'left': [ [ 'mode', 'paste' ],
 			\             [ 'readonly', 'filename', 'modified' ],
 			\             [ 'git_blame' ] ],
 			\   'right': [ [ 'lineinfo' ],
-			\              [ 'coc_errors', 'coc_warnings', 'coc_hints', 'coc_infos' ],
-			\              [ 'fileformat', 'fileencoding', 'filetype' ] ]
+			\              [ 'lsp_errors', 'lsp_warnings', 'lsp_hints', 'lsp_infos' ],
+			\              [ 'fileformat', 'fileencoding', 'filetype' ],
+			\							 [ 'lsp_status' ] ],
 			\ },
 			\ 'component_expand':  {
 			\   'git_blame':    'LightlineGitBlame',
-			\   'coc_errors':   'LightlineCocErrors',
-			\   'coc_warnings': 'LightlineCocWarnings',
-			\   'coc_hints':    'LightlineCocHints',
-			\   'coc_infos':    'LightlineCocInfos',
+			\   'lsp_errors':   'LightlineLspErrors',
+			\   'lsp_warnings': 'LightlineLspWarnings',
+			\   'lsp_hints':    'LightlineLspHints',
+			\   'lsp_infos':    'LightlineLspInfo',
+			\   'lsp_status':   'LightlineLspStatus',
 			\ },
 			\ 'component_type': {
-			\   'coc_errors':   'error',
-			\   'coc_warnings': 'warning',
-			\   'coc_hints':    'tabsel',
-			\   'coc_infos':    'middle',
+			\   'lsp_errors':   'error',
+			\   'lsp_warnings': 'warning',
+			\   'lsp_hints':    'tabsel',
+			\   'lsp_infos':    'middle',
+			\   'lsp_status':   'tabsel',
 			\ },
 			\ }
-autocmd User CocDiagnosticChange call lightline#update()
-autocmd User CocGitStatusChange  call lightline#update()
+autocmd DiagnosticChanged * call lightline#update()
+autocmd CursorHold *        call lightline#update()
 function! LightlineGitBlame() abort
-	let blame = get(b:, 'coc_git_blame', '')
+	let file = expand('%')
+	let line = line('.')
+
+	" estimate of the space we have available for the git blame message
+	" estimating space used by other components to about ~50 chars
+	let width_avail = winwidth(0) - 50 - strlen(file)
+
+	" get git blame details
+	let details = gitblame#commit_summary(file, line)
+	" format message
+	if has_key(details, 'error')
+		let blame = details['error']
+	else
+		let hash = details['commit_hash'][0:8]
+		let author = width_avail < 128 ? split(details['author'])[0] : details['author']
+		let timestamp = width_avail < 64 ? split(details['author_time'])[0] : details['author_time']
+		let date = width_avail < 32 ? '' : ' '.timestamp
+		let blame = hash.' ('.author.date.') '.details['summary']
+	endif
+
+	" truncate if necessary
 	let width_blame = strlen(blame)
-	let width_avail = winwidth(0) - 80
 	return width_blame > width_avail ? blame[0:width_avail - 3] . '...' : blame
 endfunction
-function! LightlineCocErrors() abort
-	return s:lightline_coc_diagnostic('error')
+function! LightlineLspStatus() abort
+	let server = luaeval('require("lsp_spinner").status(' . bufnr() . ')')
+	return strlen(server) > 0 ? server : '・'
 endfunction
-function! LightlineCocWarnings() abort
-	return s:lightline_coc_diagnostic('warning')
+function! LightlineLspErrors() abort
+	return s:lightline_lsp_diagnostic('ERROR')
 endfunction
-function! LightlineCocHints() abort
-	return s:lightline_coc_diagnostic('hint')
+function! LightlineLspWarnings() abort
+	return s:lightline_lsp_diagnostic('WARN')
 endfunction
-function! LightlineCocWarnings() abort
-	return s:lightline_coc_diagnostic('information')
+function! LightlineLspHints() abort
+	return s:lightline_lsp_diagnostic('HINT')
 endfunction
-function! s:lightline_coc_diagnostic(type) abort
-	let diagnostics = get(b:, 'coc_diagnostic_info', 0)
-	if empty(diagnostics) || get(diagnostics, a:type, 0) == 0
-		return ''
-	endif
-	return printf('● %d', diagnostics[a:type])
+function! LightlineLspWarnings() abort
+	return s:lightline_lsp_diagnostic('INFO')
+endfunction
+function! s:lightline_lsp_diagnostic(level) abort
+	let l:diagnostics = luaeval('vim.diagnostic.get('.bufnr().', { severity = vim.diagnostic.severity.'.a:level.'})')
+	let l:count = len(l:diagnostics)
+	return l:count == 0 ? '' : printf('● %d', l:count)
 endfunction
 
 " lightline: add command to quick-reload
@@ -328,32 +445,6 @@ function! LightlineReload()
 	call lightline#init()
 	call lightline#colorscheme()
 	call lightline#update()
-endfunction
-
-" coc: avoid cursor weirdness when opening lists
-let g:coc_disable_transparent_cursor = 1
-
-" coc: use tab to trigger completion
-inoremap <silent><expr> <TAB>
-			\ pumvisible() ? "\<C-n>" :
-			\ <SID>check_back_space() ? "\<TAB>" :
-			\ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-function! s:check_back_space() abort
-	let col = col('.') - 1
-	return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-
-" coc: view documentation
-function! s:view_docs()
-	let is_vimfile = index([ 'vim', 'help'], &filetype) >= 0
-	if is_vimfile
-		" in vim files, show help for word under cursor
-		execute 'h '.expand('<cword>')
-	else
-		" otherwise, show coc hover info
-		call CocAction('doHover')
-	endif
 endfunction
 
 " vim-js-pretty-template: syntax highlighting for template literals

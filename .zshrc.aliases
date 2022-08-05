@@ -10,6 +10,10 @@ export EDITOR="nvim"
 
 # --- Aliases
 
+# Kitty
+alias sk="kitty +kitten ssh"
+alias ss="TERM=xterm ssh"
+
 # ZSH
 alias zconfig="$EDITOR $CONFIG"
 alias zreload="source $CONFIG"
@@ -46,6 +50,11 @@ alias pr="gh pr create --web"
 # Node
 alias npr="npm run"
 alias scripts="jq '.scripts' package.json"
+
+# Python
+alias venv="source ./venv/bin/activate"
+alias vnev="deactivate"
+alias vnew="python -m venv ./venv"
 
 # Docker
 alias docks='docker ps -a --format "{{.Names}}😎{{.ID}}😎{{.Status}}😎{{.Image}}" \

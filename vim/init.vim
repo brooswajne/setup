@@ -242,10 +242,10 @@ local on_attach = function(client, bufnr)
 	lsp_spinner.on_attach(client, bufnr)
 
 	-- if possible: format on save
-	if client.resolved_capabilities.document_formatting then
+	if client.server_capabilities.documentFormattingProvider then
 		vim.api.nvim_exec([[
 			augroup lsp_format_on_save
-				autocmd BufWritePre * lua vim.lsp.buf.formatting_sync(nil, 1000)
+				autocmd BufWritePre * lua vim.lsp.buf.format(nil, 1000)
 			augroup END
 		]], false)
 	else 
@@ -257,7 +257,7 @@ local on_attach = function(client, bufnr)
 	end
 
 	-- if possible: highlight hovered symbol
-	if client.resolved_capabilities.document_highlight then
+	if client.server_capabilities.documentHighlightProvider then
 		vim.api.nvim_exec([[
 			augroup lsp_document_highlight
 				autocmd! * <buffer>
@@ -282,6 +282,7 @@ lsp.clangd.setup(cfg)         -- C++
 lsp.cmake.setup(cfg)          -- CMake
 lsp.denols.setup(cfg)         -- TypeScript (Deno)
 lsp.eslint.setup(cfg)         -- JavaScript (ESlint)
+lsp.gopls.setup(cfg)          -- Go
 lsp.jdtls.setup(cfg)          -- Java
 lsp.phpactor.setup(cfg)       -- PHP
 lsp.pyright.setup(cfg)        -- Pyright

@@ -63,6 +63,7 @@ set splitright        " vertical splits open to the right
 set splitbelow        " horizontal splits open below
 
 set guicursor=a:block " for nvim, avoid a thin cursor in insert mode
+set mouse=            " for nvim, i don't like mice
 set nofoldenable      " don't fold files by default when opening them
 set conceallevel=0    " don't conceal things, i want to see them for what they are
 
@@ -75,6 +76,14 @@ augroup more_filetypes
 	autocmd!
 	autocmd BufNewFile,BufRead *.cjs set filetype=javascript
 augroup END
+
+function! TrimTrailingWhitespace()
+	let l:winview = winsaveview()
+	silent! %s/\s\+$//
+	" restore original cursor position
+	call winrestview(l:winview)
+endfunction
+command TrTr :call TrimTrailingWhitespace()
 
 " =======
 " Keymaps

@@ -319,6 +319,25 @@ EOF
 " format on save for eslint - is this needed?
 " autocmd BufWritePre *.ts,*.js EslintFixAll
 
+" ===========
+" Tree-Sitter
+" ===========
+
+lua << EOF
+require('nvim-treesitter.configs').setup({
+	ensure_installed = {
+		"bash",
+		"go",
+		"javascript",
+		"lua",
+		"python",
+		"rust",
+		"typescript",
+		"vim",
+	},
+})
+EOF
+
 " =======
 " Plugins
 " =======

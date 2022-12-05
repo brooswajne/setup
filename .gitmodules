@@ -91,3 +91,9 @@
 [submodule "vim/bundle/git-blame.vim"]
 	path = vim/bundle/git-blame.vim
 	url = https://github.com/zivyangll/git-blame.vim.git
+[submodule "vim/bundle/lsp_spinner.nvim"]
+	path = vim/bundle/lsp_spinner.nvim
+	url = https://github.com/doums/lsp_spinner.nvim.git
+[submodule "vim/bundle/nvim-treesitter"]
+	path = vim/bundle/nvim-treesitter
+	url = https://github.com/nvim-treesitter/nvim-treesitter.git

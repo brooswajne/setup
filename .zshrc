@@ -47,5 +47,7 @@ _fzf_compgen_dir() {
 	fd --type d --hidden --follow --exclude '.git' . "$1"
 }
 
+export RIPGREP_CONFIG_PATH="$HOME/Git/setup/.ripgreprc"
+
 export _ZO_ECHO=1
 eval "$(zoxide init zsh)"

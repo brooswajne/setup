@@ -10,9 +10,11 @@ export EDITOR="nvim"
 
 # --- Aliases
 
-# Kitty
+# SSH / Remote Machines
 alias sk="kitty +kitten ssh"
 alias ss="TERM=xterm ssh"
+alias sc="$EDITOR $HOME/.ssh/config"
+alias rsy="rsync -avzhP"
 
 # ZSH
 alias zconfig="$EDITOR $CONFIG"

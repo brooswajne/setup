@@ -68,17 +68,6 @@ alias docks='docker ps -a --format "{{.Names}}😎{{.ID}}😎{{.Status}}😎{{.I
 	| sed -e "s/🍌//" \
 	| column -s$(echo "\x1e") -t'
 
-# Todo
-alias td="todo.sh"
-alias tde="nvim /usr/local/bin/todo.txt"
-
-# Timewarrior
-alias tgone="timew stop"
-alias tback="timew continue"
-alias tshow="timew summary :id"
-alias tshoww="timew summary :id 8d before tomorrow"
-alias tweek="timew week 8d before tomorrow"
-alias tmonth="timew month 1m before tomorrow"
 
 # --- Utility Functions
 

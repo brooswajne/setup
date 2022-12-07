@@ -68,6 +68,8 @@ alias docks='docker ps -a --format "{{.Names}}😎{{.ID}}😎{{.Status}}😎{{.I
 	| sed -e "s/🍌//" \
 	| column -s$(echo "\x1e") -t'
 
+# AWS
+alias awls="grep '^\[' ~/.aws/credentials | sed -e 's/^\[//' -e 's/\]$//'"
 
 # --- Utility Functions
 

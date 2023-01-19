@@ -234,13 +234,7 @@ colorscheme space-vim-dark
 lua << EOF
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 
-local lsp_spinner = require('lsp_spinner');
-lsp_spinner.setup({})
-lsp_spinner.init_capabilities(capabilities)
-
 local on_attach = function(client, bufnr)
-	lsp_spinner.on_attach(client, bufnr)
-
 	-- if possible: format on save
 	if client.server_capabilities.documentFormattingProvider then
 		vim.api.nvim_exec([[
@@ -400,8 +394,7 @@ let g:lightline = {
 			\             [ 'git_blame' ] ],
 			\   'right': [ [ 'lineinfo' ],
 			\              [ 'lsp_errors', 'lsp_warnings', 'lsp_hints', 'lsp_infos' ],
-			\              [ 'fileformat', 'fileencoding', 'filetype' ],
-			\							 [ 'lsp_status' ] ],
+			\              [ 'fileformat', 'fileencoding', 'filetype' ] ],
 			\ },
 			\ 'component_expand':  {
 			\   'git_blame':    'LightlineGitBlame',
@@ -409,7 +402,6 @@ let g:lightline = {
 			\   'lsp_warnings': 'LightlineLspWarnings',
 			\   'lsp_hints':    'LightlineLspHints',
 			\   'lsp_infos':    'LightlineLspInfo',
-			\   'lsp_status':   'LightlineLspStatus',
 			\ },
 			\ 'component_type': {
 			\   'lsp_errors':   'error',
@@ -445,10 +437,6 @@ function! LightlineGitBlame() abort
 	" truncate if necessary
 	let width_blame = strlen(blame)
 	return width_blame > width_avail ? blame[0:width_avail - 3] . '...' : blame
-endfunction
-function! LightlineLspStatus() abort
-	let server = luaeval('require("lsp_spinner").status(' . bufnr() . ')')
-	return strlen(server) > 0 ? server : '・'
 endfunction
 function! LightlineLspErrors() abort
 	return s:lightline_lsp_diagnostic('ERROR')

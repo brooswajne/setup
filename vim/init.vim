@@ -23,6 +23,17 @@ augroup END
 augroup wrapping " line-wrapping for text-based files
 	autocmd Filetype text     setlocal wrap linebreak textwidth=80
 	autocmd Filetype markdown setlocal wrap linebreak textwidth=80
+	autocmd Filetype html     setlocal wrap linebreak textwidth=80
+augroup END
+function! <SID>TrimTrailingWhitespace()
+	let l = line(".")
+	let c = col(".")
+	%s/\s\+$//e
+	call cursor(l, c)
+endfun
+augroup whitespace " trim trailing whitespace for additional filetypes
+	autocmd Filetype markdown :call <SID>TrimTrailingWhitespace()
+	autocmd Filetype html     :call <SID>TrimTrailingWhitespace()
 augroup END
 
 augroup indentation " space vs tab indentation

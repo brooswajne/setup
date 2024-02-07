@@ -15,7 +15,7 @@
 	algorithm = histogram
 	compactionHeuristic = true
 [interactive]
-	diffFilter = delta --color-only
+	diffFilter = delta --color-only --wrap-max-lines unlimited --max-line-length 0
 
 [delta]
 	line-numbers = true

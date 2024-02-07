@@ -1,5 +1,5 @@
 " load all plugins (in ~/.vim/bundle)
-execute pathogen#infect() 
+execute pathogen#infect()
 
 set nocompatible          " aka. 'enter the current millennium'
 syntax on                 " syntax highlighting
@@ -20,20 +20,15 @@ augroup numbertoggle      " absolute line numbers when in insert mode
 	autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
 augroup END
 
+function! SetupWrapping()
+	setlocal wrap linebreak
+	nnoremap <buffer> <expr> j v:count ? 'j' : 'gj'
+	nnoremap <buffer> <expr> k v:count ? 'k' : 'gk'
+endfunction
 augroup wrapping " line-wrapping for text-based files
-	autocmd Filetype text     setlocal wrap linebreak textwidth=80
-	autocmd Filetype markdown setlocal wrap linebreak textwidth=80
-	autocmd Filetype html     setlocal wrap linebreak textwidth=80
-augroup END
-function! <SID>TrimTrailingWhitespace()
-	let l = line(".")
-	let c = col(".")
-	%s/\s\+$//e
-	call cursor(l, c)
-endfun
-augroup whitespace " trim trailing whitespace for additional filetypes
-	autocmd Filetype markdown :call <SID>TrimTrailingWhitespace()
-	autocmd Filetype html     :call <SID>TrimTrailingWhitespace()
+	autocmd Filetype text     call SetupWrapping()
+	autocmd Filetype markdown call SetupWrapping()
+	autocmd Filetype html     call SetupWrapping()
 augroup END
 
 augroup indentation " space vs tab indentation
@@ -43,9 +38,10 @@ augroup END
 set undodir=~/.vimdid " directory to store undo history
 set undofile          " persist undo history after closing files
 
-set tabstop=2         " changes width of tab character
-set softtabstop=2     " changes how far inserted tab characters move the cursor
-set shiftwidth=2      " affects automatic indentation, and when pressing <<, >>, or ==
+set list listchars=tab:»-,trail:·
+set tabstop=4         " changes width of tab character
+set softtabstop=4     " changes how far inserted tab characters move the cursor
+set shiftwidth=4      " affects automatic indentation, and when pressing <<, >>, or ==
 set noexpandtab       " don't turn tabs into spaces
 
 set scrolloff=3       " always keep N lines above/below the cursor when scrolling
@@ -84,6 +80,7 @@ function! TrimTrailingWhitespace()
 	call winrestview(l:winview)
 endfunction
 command TrTr :call TrimTrailingWhitespace()
+autocmd BufWritePre * :call TrimTrailingWhitespace()
 
 " =======
 " Keymaps
@@ -188,7 +185,7 @@ function! SetMyHighlighting()
 	" transparent background
 	highlight Normal     ctermbg=none  guibg=none
 
-	highlight VertSplit  ctermbg=232   ctermfg=232 
+	highlight VertSplit  ctermbg=232   ctermfg=232
 	highlight VertSplit  guibg=#080808 guifg=#080808
 	highlight SignColumn ctermbg=233
 	highlight SignColumn guibg=#121212
@@ -208,7 +205,7 @@ function! SetMyHighlighting()
 
 	" gitgutter styling
 	let g:gitgutter_set_sign_backgrounds = 1
-	highlight GitGutterAdd    ctermbg=233   cterm=bold ctermfg=green 
+	highlight GitGutterAdd    ctermbg=233   cterm=bold ctermfg=green
 	highlight GitGutterAdd    guibg=#121212 gui=bold   guibg=green
 	highlight GitGutterChange ctermbg=233   cterm=bold ctermfg=yellow
 	highlight GitGutterChange guibg=#121212 gui=bold   guibg=yellow
@@ -242,8 +239,8 @@ local on_attach = function(client, bufnr)
 				autocmd BufWritePre * lua vim.lsp.buf.format(nil, 1000)
 			augroup END
 		]], false)
-	else 
-		vim.api.nvim_exec([[ 
+	else
+		vim.api.nvim_exec([[
 			augroup lsp_format_on_save
 				autocmd!
 			augroup END
@@ -259,8 +256,8 @@ local on_attach = function(client, bufnr)
 				autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
 			augroup END
 		]], false)
-	else 
-		vim.api.nvim_exec([[ 
+	else
+		vim.api.nvim_exec([[
 			augroup lsp_document_highlight
 				autocmd!
 			augroup END
@@ -278,17 +275,17 @@ lsp.denols.setup(cfg)         -- TypeScript (Deno)
 lsp.eslint.setup(cfg)         -- JavaScript (ESlint)
 lsp.gopls.setup(cfg)          -- Go
 lsp.jdtls.setup(cfg)          -- Java
+lsp.kotlin_language_server.setup(cfg) -- Kotlin
 lsp.phpactor.setup(cfg)       -- PHP
 lsp.pyright.setup(cfg)        -- Pyright
 lsp.tsserver.setup({          -- TypeScript (Node)
 	cfg,
 	root_dir = lsp.util.root_pattern('package.json'),
 })
-lsp.vimls.setup(cfg)         -- VimScript
+lsp.vimls.setup(cfg)          -- VimScript
 require('rust-tools').setup({ -- Rust
 	tools = {
 		autoSetHints = true,
-		hover_with_actions = true,
 		inlay_hints = {
 			show_parameter_hints = false,
 			parameter_hints_prefix = "",
@@ -309,15 +306,24 @@ require('rust-tools').setup({ -- Rust
 -- Completions
 local cmp = require('cmp')
 cmp.setup({
-	mapping = {
+	mapping = cmp.mapping.preset.insert({
 		[ '<Tab>' ] = cmp.mapping.select_next_item(),
-	},
+	}),
 	sources = {
+		{ name = "copilot" },
 		{ name = 'nvim_lsp' },
 		{ name = 'path' },
 		{ name = 'buffer' },
 	},
 })
+
+-- Copilot
+require('copilot').setup({
+	-- Superceded by copilot-cmp
+	suggestion = { enabled = false },
+	panel = { enabled = false },
+})
+require('copilot_cmp').setup({})
 EOF
 
 " format on save for eslint - is this needed?

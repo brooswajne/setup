@@ -94,3 +94,12 @@
 [submodule "vim/bundle/nvim-treesitter"]
 	path = vim/bundle/nvim-treesitter
 	url = https://github.com/nvim-treesitter/nvim-treesitter.git
+[submodule "vim/bundle/copilot.lua"]
+	path = vim/bundle/copilot.lua
+	url = git@github.com:zbirenbaum/copilot.lua.git
+[submodule "vim/bundle/copilot-cmp"]
+	path = vim/bundle/copilot-cmp
+	url = git@github.com:zbirenbaum/copilot-cmp.git
+[submodule "vim/bundle/kotlin-vim"]
+	path = vim/bundle/kotlin-vim
+	url = git@github.com:udalov/kotlin-vim.git

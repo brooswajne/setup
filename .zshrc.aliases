@@ -21,6 +21,7 @@ alias zconfig="$EDITOR $CONFIG"
 alias zreload="source $CONFIG"
 alias zlocal="$EDITOR $CONFIG_LOCAL"
 alias zalias="$EDITOR $THIS"
+alias zralias="source $CONFIG_ALIAS"
 alias j="jobs -d"
 
 # Navigation
@@ -129,6 +130,31 @@ base64url() {
 	# https://stackoverflow.com/questions/55389211/string-based-data-encoding-base64-vs-base64url
 	local encoded=$(base64 </dev/stdin)
 	echo $encoded | sed -E 's/\+/-/g;s/\//_/g;s/=+//g'
+}
+
+# hacky interactive jq
+jiq() {
+	local file
+	if [ -z $1 ]
+	then
+		file=$(mktemp)
+		cat /dev/stdin > $file
+	else file="$1"
+	fi
+
+	local cols=$(tput cols)
+	local width=$(($cols - 4))
+
+	local horizontal_separator=$(printf "%${width}s\n" | sed -e 's/ /⎯/g')
+	local header="echo '\x1b[1m${file}\x1b[0m\n${horizontal_separator}'"
+	local preview_original="cat $file | jq"
+	local preview_filtered="cat $file | jq {q} -C 2>&1 | sed -e 's/^/\x1b[0m│ /' -e 's/$/\x1b[0m/'"
+	local query=$(echo '' | fzf --print-query \
+		--preview "cat <($header) <(/usr/bin/pr -m -t -n -w $width <($preview_original) <($preview_filtered))" \
+		--preview-window="up,99%")
+
+	echo "$query" 1>&2;
+	jq "$query" "$file"
 }
 
 # Quicker CTRL-Z to fg

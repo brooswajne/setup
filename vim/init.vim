@@ -271,17 +271,13 @@ lsp.ansiblels.setup(cfg)      -- Ansible
 lsp.bashls.setup(cfg)         -- Bash
 lsp.clangd.setup(cfg)         -- C++
 lsp.cmake.setup(cfg)          -- CMake
-lsp.denols.setup(cfg)         -- TypeScript (Deno)
 lsp.eslint.setup(cfg)         -- JavaScript (ESlint)
 lsp.gopls.setup(cfg)          -- Go
 lsp.jdtls.setup(cfg)          -- Java
 lsp.kotlin_language_server.setup(cfg) -- Kotlin
 lsp.phpactor.setup(cfg)       -- PHP
 lsp.pyright.setup(cfg)        -- Pyright
-lsp.tsserver.setup({          -- TypeScript (Node)
-	cfg,
-	root_dir = lsp.util.root_pattern('package.json'),
-})
+lsp.ts_ls.setup(cfg)          -- TypeScript (Node)
 lsp.vimls.setup(cfg)          -- VimScript
 require('rust-tools').setup({ -- Rust
 	tools = {

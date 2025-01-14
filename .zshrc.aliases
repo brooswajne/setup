@@ -61,18 +61,10 @@ alias venv="source ./venv/bin/activate"
 alias vnev="deactivate"
 alias vnew="python -m venv ./venv"
 
-# Docker
-alias docks='docker ps -a --format "{{.Names}}😎{{.ID}}😎{{.Status}}😎{{.Image}}" \
-	| sort \
-	| awk -F"😎" '"'"'{ print "\x1b[1m"$1"\x1b[0m\x1e(\x1b[33m"$2"\x1b[0m)\x1e"$3"\x1b[0m\x1e\x1b[2m🍌"$4"\x1b[0m" }'"'"' \
-	| sed -e $(echo "s/\x1eExited/\x1e\x1b[31mExited/") \
-	| sed -e $(echo "s/\x1eUp/\x1e\x1b[32mUp/") \
-	| sed -e "s/🍌.*://" \
-	| sed -e "s/🍌//" \
-	| column -s$(echo "\x1e") -t'
-
-# AWS
-alias awls="grep '^\[' ~/.aws/credentials | sed -e 's/^\[//' -e 's/\]$//'"
+# Misc.
+alias awls="grep '^\[' ~/.aws/credentials | sed -e 's/^\[//' -e 's/\]$//' | sort"
+alias pretty_csv="sed 's/,/,⁣/g' | column -t -s'⁣' | bat -lcsv -S"
+alias pretty_tsv="sed 's/\t/⁣\t/g' | column -t -s'⁣' | bat -ltsv -S"
 
 # --- Utility Functions
 

@@ -25,7 +25,8 @@ alias zralias="source $CONFIG_ALIAS"
 alias j="jobs -d"
 
 # Navigation
-alias tree="exa --tree --group-directories-first --sort Name"
+alias ls="eza"
+alias tree="eza --tree --group-directories-first --sort Name"
 alias treee="tree --all"
 alias treeg="treee --git-ignore --ignore-glob .git"
 

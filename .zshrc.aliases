@@ -50,6 +50,7 @@ alias cherp="git cherry-pick"
 alias oops="git commit --amend"
 alias conflicts="git diff --name-only --diff-filter=U | xargs $EDITOR"
 alias pr="gh pr create --web"
+alias submit="git pinit github && gh pr create --web"
 
 # Node
 alias npr="npm run"

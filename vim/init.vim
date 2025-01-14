@@ -80,7 +80,9 @@ function! TrimTrailingWhitespace()
 	call winrestview(l:winview)
 endfunction
 command TrTr :call TrimTrailingWhitespace()
-autocmd BufWritePre * :call TrimTrailingWhitespace()
+augroup trim_trailing_whitespace
+	autocmd BufWritePre * :call TrimTrailingWhitespace()
+augroup END
 
 " =======
 " Keymaps

@@ -1,0 +1,50 @@
+[terminal.shell]
+program = "/usr/local/bin/tmux"
+args = [
+	"new-session",
+	"-s", "alacritty",
+	# If an `alacritty` session already exists, attach to it.
+	# Allows me to detach to exit my terminal, but keep my session running
+	# in the background.
+	"-A",
+	# To start a separate session, run `alacritty -e tmux`.
+]
+
+[font]
+normal.family = "FantasqueSansMono Nerd Font Mono"
+size = 12
+
+[window]
+decorations = "None"
+padding.y = 2
+
+[colors]
+primary.foreground = "#cbcbcb"
+primary.background = "#001628"
+
+# -------------------------------------------------------------
+# Key-bindings for easier tmux'ing, even on remote environments.
+
+# Pane navigation
+# - \u0002: The escape code for Ctrl+B.
+# - \u001b: The escape code for the standard terminal escape character (\x1b).
+# - [: Start of a control sequence.
+# - A/B/C/D: Up/Down/Left/Right
+[[keyboard.bindings]]
+mods = "Command"
+key = "ArrowUp"
+chars = "\u0002\u001b[A"
+[[keyboard.bindings]]
+mods = "Command"
+key = "ArrowDown"
+chars = "\u0002\u001b[B"
+[[keyboard.bindings]]
+mods = "Command"
+key = "ArrowRight"
+chars = "\u0002\u001b[C"
+[[keyboard.bindings]]
+mods = "Command"
+key = "ArrowLeft"
+chars = "\u0002\u001b[D"
+
+[terminal]

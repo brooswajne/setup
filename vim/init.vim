@@ -1,6 +1,3 @@
-" load all plugins (in ~/.vim/bundle)
-execute pathogen#infect()
-
 set nocompatible          " avoid weirdness due to vi backwards-compatibility
 syntax on                 " syntax highlighting
 filetype plugin indent on " file detection
@@ -223,143 +220,90 @@ if (has("autocmd") && !has("gui_running"))
 	augroup END
 endif
 
-" set colorscheme
-colorscheme space-vim-dark
-
 if has('nvim')
-	lua require('tree-sitter')
-	lua require('language-server')
+	lua require('config.plugins')
+	lua require('config.tree-sitter')
+	lua require('config.language-server')
+
+	" TODO: Move to plugins/lighline.lua
+	" lightline: configure status bar (diagnostics)
+	let g:lightline = {
+				\ 'active': {
+				\   'left': [ [ 'mode', 'paste' ],
+				\             [ 'readonly', 'filename', 'modified' ],
+				\             [ 'git_blame' ] ],
+				\   'right': [ [ 'lineinfo' ],
+				\              [ 'lsp_errors', 'lsp_warnings', 'lsp_hints', 'lsp_infos' ],
+				\              [ 'fileformat', 'fileencoding', 'filetype' ] ],
+				\ },
+				\ 'component_expand':  {
+				\   'git_blame':    'LightlineGitBlame',
+				\   'lsp_errors':   'LightlineLspErrors',
+				\   'lsp_warnings': 'LightlineLspWarnings',
+				\   'lsp_hints':    'LightlineLspHints',
+				\   'lsp_infos':    'LightlineLspInfo',
+				\ },
+				\ 'component_type': {
+				\   'lsp_errors':   'error',
+				\   'lsp_warnings': 'warning',
+				\   'lsp_hints':    'tabsel',
+				\   'lsp_infos':    'middle',
+				\   'lsp_status':   'tabsel',
+				\ },
+				\ }
+	autocmd DiagnosticChanged * call lightline#update()
+	autocmd CursorHold *        call lightline#update()
+	function! LightlineGitBlame() abort
+		let file = expand('%')
+		let line = line('.')
+
+		" estimate of the space we have available for the git blame message
+		" estimating space used by other components to about ~50 chars
+		let width_avail = winwidth(0) - 50 - strlen(file)
+		lua require('config.plugins')
+		lua require('config.tree-sitter')
+		lua require('config.language-server')
+
+		" get git blame details
+		let details = gitblame#commit_summary(file, line)
+		" format message
+		if has_key(details, 'error')
+			let blame = details['error']
+		else
+			let hash = details['commit_hash'][0:8]
+			let author = width_avail < 128 ? split(details['author'])[0] : details['author']
+			let timestamp = width_avail < 64 ? split(details['author_time'])[0] : details['author_time']
+			let date = width_avail < 32 ? '' : ' '.timestamp
+			let blame = hash.' ('.author.date.') '.details['summary']
+		endif
+
+		" truncate if necessary
+		let width_blame = strlen(blame)
+		return width_blame > width_avail ? blame[0:width_avail - 3] . '...' : blame
+	endfunction
+	function! LightlineLspErrors() abort
+		return s:lightline_lsp_diagnostic('ERROR')
+	endfunction
+	function! LightlineLspWarnings() abort
+		return s:lightline_lsp_diagnostic('WARN')
+	endfunction
+	function! LightlineLspHints() abort
+		return s:lightline_lsp_diagnostic('HINT')
+	endfunction
+	function! LightlineLspWarnings() abort
+		return s:lightline_lsp_diagnostic('INFO')
+	endfunction
+	function! s:lightline_lsp_diagnostic(level) abort
+		let l:diagnostics = luaeval('vim.diagnostic.get('.bufnr().', { severity = vim.diagnostic.severity.'.a:level.'})')
+		let l:count = len(l:diagnostics)
+		return l:count == 0 ? '' : printf('● %d', l:count)
+	endfunction
+
+	" lightline: add command to quick-reload
+	command! LightlineReload call LightlineReload()
+	function! LightlineReload()
+		call lightline#init()
+		call lightline#colorscheme()
+		call lightline#update()
+	endfunction
 endif
-
-" =======
-" Plugins
-" TODO: Break this out from the main init.vim
-" =======
-
-" nvim-cmp: completions options
-set completeopt=menuone,noinsert,noselect
-
-" vim-sneak: re-tapping s jumps to next match
-let g:sneak#s_next = 1
-
-" vim-svelte-plugin: indentation style
-let g:vim_svelte_plugin_has_init_indent = 0
-" vim-svelte-plugin: support lang=ts
-let g:vim_svelte_plugin_use_typescript = 1
-
-" vim-rooter: use npm module as root
-let g:rooter_patterns = ['.git', 'package.json']
-
-" vim-terraform: align settings automatically
-let g:terraform_align = 1
-" vim-terraform: format on save
-let g:terraform_fmt_on_save = 1
-
-" vimwiki: don't use just <Leader> as a prefix, as it conflicts with my keybinds
-let g:vimwiki_map_prefix = '<Leader>vw'
-" vimwiki: don't use vimwiki filetype for non-vimwiki markdown files
-let g:vimwiki_global_ext = 0
-" vimwiki: path
-let g:vimwiki_root = '~/wiki'
-let g:vimwiki_list = [ {
-			\ 'path': '~/wiki',
-			\ 'syntax': 'markdown',
-			\ 'ext': '.md',
-			\ } ]
-
-" don't force me to conceal when i don't want to:
-" vimwiki: don't force me to conceal when i don't want to
-let g:vimwiki_conceallevel = 0
-" vim-json: don't force me to conceal when i don't want to
-let g:vim_json_syntax_conceal = 0
-" vim-markdown: don't force me to conceal when i don't want to
-let g:vim_markdown_conceal = 0
-let g:vim_markdown_conceal_code_blocks = 0
-
-" lightline: configure status bar (diagnostics)
-let g:lightline = {
-			\ 'active': {
-			\   'left': [ [ 'mode', 'paste' ],
-			\             [ 'readonly', 'filename', 'modified' ],
-			\             [ 'git_blame' ] ],
-			\   'right': [ [ 'lineinfo' ],
-			\              [ 'lsp_errors', 'lsp_warnings', 'lsp_hints', 'lsp_infos' ],
-			\              [ 'fileformat', 'fileencoding', 'filetype' ] ],
-			\ },
-			\ 'component_expand':  {
-			\   'git_blame':    'LightlineGitBlame',
-			\   'lsp_errors':   'LightlineLspErrors',
-			\   'lsp_warnings': 'LightlineLspWarnings',
-			\   'lsp_hints':    'LightlineLspHints',
-			\   'lsp_infos':    'LightlineLspInfo',
-			\ },
-			\ 'component_type': {
-			\   'lsp_errors':   'error',
-			\   'lsp_warnings': 'warning',
-			\   'lsp_hints':    'tabsel',
-			\   'lsp_infos':    'middle',
-			\   'lsp_status':   'tabsel',
-			\ },
-			\ }
-autocmd DiagnosticChanged * call lightline#update()
-autocmd CursorHold *        call lightline#update()
-function! LightlineGitBlame() abort
-	let file = expand('%')
-	let line = line('.')
-
-	" estimate of the space we have available for the git blame message
-	" estimating space used by other components to about ~50 chars
-	let width_avail = winwidth(0) - 50 - strlen(file)
-
-	" get git blame details
-	let details = gitblame#commit_summary(file, line)
-	" format message
-	if has_key(details, 'error')
-		let blame = details['error']
-	else
-		let hash = details['commit_hash'][0:8]
-		let author = width_avail < 128 ? split(details['author'])[0] : details['author']
-		let timestamp = width_avail < 64 ? split(details['author_time'])[0] : details['author_time']
-		let date = width_avail < 32 ? '' : ' '.timestamp
-		let blame = hash.' ('.author.date.') '.details['summary']
-	endif
-
-	" truncate if necessary
-	let width_blame = strlen(blame)
-	return width_blame > width_avail ? blame[0:width_avail - 3] . '...' : blame
-endfunction
-function! LightlineLspErrors() abort
-	return s:lightline_lsp_diagnostic('ERROR')
-endfunction
-function! LightlineLspWarnings() abort
-	return s:lightline_lsp_diagnostic('WARN')
-endfunction
-function! LightlineLspHints() abort
-	return s:lightline_lsp_diagnostic('HINT')
-endfunction
-function! LightlineLspWarnings() abort
-	return s:lightline_lsp_diagnostic('INFO')
-endfunction
-function! s:lightline_lsp_diagnostic(level) abort
-	let l:diagnostics = luaeval('vim.diagnostic.get('.bufnr().', { severity = vim.diagnostic.severity.'.a:level.'})')
-	let l:count = len(l:diagnostics)
-	return l:count == 0 ? '' : printf('● %d', l:count)
-endfunction
-
-" lightline: add command to quick-reload
-command! LightlineReload call LightlineReload()
-function! LightlineReload()
-	call lightline#init()
-	call lightline#colorscheme()
-	call lightline#update()
-endfunction
-
-" vim-js-pretty-template: syntax highlighting for template literals
-call jspretmpl#register_tag('css', 'css')
-call jspretmpl#register_tag('html', 'html')
-call jspretmpl#register_tag('sql', 'sql')
-augroup tagged_templates
-	autocmd!
-	autocmd FileType javascript JsPreTmpl
-	autocmd FileType typescript JsPreTmpl
-augroup END

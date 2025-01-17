@@ -16,21 +16,22 @@ brew 'fzf'
 brew 'git'
 brew 'git-delta'
 brew 'jq'
-brew 'zoxide'
-brew 'tmux'
 brew 'rust-analyzer'
+brew 'tmux'
+brew 'zoxide'
 # Window manager
-brew 'yabai'
 brew 'skhd'
+brew 'yabai'
 
 # Casks I use all the time
 
-cask 'font-fantasque-sans-mono'
+cask '1password'
 cask 'alacritty'
+cask 'firefox@developer-edition'
+cask 'font-fantasque-sans-mono'
 cask 'obsidian'
 
-# App store packages
+# Languages
 
-# App Store CLI, needed to install the packages
-brew 'mas'
-mas '1Password', id: 1333542190
+brew 'nvm'
+brew 'pyenv'
